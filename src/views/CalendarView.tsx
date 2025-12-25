@@ -1,40 +1,45 @@
 import { useState } from 'react';
-import { Calendar, Plus, Edit2, Trash2, CalendarDays, List, Grid3X3, X } from 'lucide-react';
+import { Calendar, Plus, Edit2, Trash2, CalendarDays, List, Grid3X3, Loader2 } from 'lucide-react';
 import { Evento, ViewMode } from '@/types';
-import { INITIAL_EVENTS, TIPOS_EVENTO, DIRETORIAS } from '@/data/mockData';
+import { TIPOS_EVENTO, DIRETORIAS } from '@/data/mockData';
 import { formatDateString } from '@/utils/formatters';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import DateRangePicker from '@/components/calendar/DateRangePicker';
 import MonthlyCalendarView from '@/components/calendar/MonthlyCalendarView';
 import YearlyCalendarView from '@/components/calendar/YearlyCalendarView';
+import { useEventos } from '@/hooks/useEventos';
 
 const CalendarView = () => {
-  const [eventos, setEventos] = useState<Evento[]>(INITIAL_EVENTS);
-  const [formData, setFormData] = useState<Evento>({ 
-    id: 0, nome: '', dataInicio: '', dataFim: '', tipo: '', pauta: '', diretorias: [] 
+  const { eventos, loading, createEvento, updateEvento, deleteEvento } = useEventos();
+  const [formData, setFormData] = useState<Omit<Evento, 'id'> & { id?: string }>({ 
+    nome: '', dataInicio: '', dataFim: '', tipo: '', pauta: '', diretorias: [] 
   });
   const [isEditing, setIsEditing] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [eventToDelete, setEventToDelete] = useState<number | null>(null);
+  const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
   const resetForm = () => {
-    setFormData({ id: 0, nome: '', dataInicio: '', dataFim: '', tipo: '', pauta: '', diretorias: [] });
+    setFormData({ nome: '', dataInicio: '', dataFim: '', tipo: '', pauta: '', diretorias: [] });
     setIsEditing(false);
     setShowCalendar(false);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.nome || !formData.dataInicio || !formData.tipo) return;
 
-    if (isEditing) {
-      setEventos(eventos.map(ev => ev.id === formData.id ? { ...formData } : ev));
-    } else {
-      setEventos([...eventos, { ...formData, id: Date.now(), dataFim: formData.dataFim || formData.dataInicio }]);
+    try {
+      if (isEditing && formData.id) {
+        await updateEvento(formData.id, { ...formData, dataFim: formData.dataFim || formData.dataInicio });
+      } else {
+        await createEvento({ ...formData, dataFim: formData.dataFim || formData.dataInicio });
+      }
+      resetForm();
+    } catch (error) {
+      // Error handled in hook
     }
-    resetForm();
   };
 
   const handleEdit = (evento: Evento) => {
@@ -43,13 +48,13 @@ const CalendarView = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDeleteClick = (id: number) => {
+  const handleDeleteClick = (id: string) => {
     setEventToDelete(id);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (eventToDelete !== null) {
-      setEventos(eventos.filter(e => e.id !== eventToDelete));
+      await deleteEvento(eventToDelete);
       setEventToDelete(null);
     }
   };
@@ -62,6 +67,14 @@ const CalendarView = () => {
         : [...prev.diretorias, diretoria]
     }));
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-slide-up">

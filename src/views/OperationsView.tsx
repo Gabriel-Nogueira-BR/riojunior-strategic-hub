@@ -1,21 +1,20 @@
 import { useState } from 'react';
-import { Plus, Edit2, Trash2, TrendingUp, TrendingDown, DollarSign, PiggyBank, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, TrendingUp, TrendingDown, DollarSign, PiggyBank, ArrowUpCircle, ArrowDownCircle, Loader2 } from 'lucide-react';
 import { Transacao } from '@/types';
-import { MOCK_TRANSACOES, CATEGORIAS_TRANSACAO } from '@/data/mockData';
 import { formatCurrency, formatDateString } from '@/utils/formatters';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import { useTransacoes } from '@/hooks/useTransacoes';
 
 const OperationsView = () => {
-  const [transacoes, setTransacoes] = useState<Transacao[]>(MOCK_TRANSACOES);
-  const [transacaoToDelete, setTransacaoToDelete] = useState<number | null>(null);
+  const { transacoes, tiposTransacao, loading, createTransacao, updateTransacao, deleteTransacao } = useTransacoes();
+  const [transacaoToDelete, setTransacaoToDelete] = useState<string | null>(null);
   const [filterTipo, setFilterTipo] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('');
   
   // Form state
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [formData, setFormData] = useState<Transacao>({
-    id: 0,
+  const [formData, setFormData] = useState<Omit<Transacao, 'id'> & { id?: string }>({
     descricao: '',
     valor: 0,
     tipo: 'entrada',
@@ -31,7 +30,6 @@ const OperationsView = () => {
       setIsEditing(true);
     } else {
       setFormData({
-        id: 0,
         descricao: '',
         valor: 0,
         tipo: 'entrada',
@@ -44,26 +42,33 @@ const OperationsView = () => {
     setIsFormOpen(true);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isEditing) {
-      setTransacoes(transacoes.map(item => item.id === formData.id ? formData : item));
-    } else {
-      setTransacoes([...transacoes, { ...formData, id: Date.now() }]);
+    try {
+      if (isEditing && formData.id) {
+        await updateTransacao(formData.id, formData);
+      } else {
+        await createTransacao(formData);
+      }
+      setIsFormOpen(false);
+    } catch (error) {
+      // Error handled in hook
     }
-    setIsFormOpen(false);
   };
 
-  const handleDeleteClick = (id: number) => {
+  const handleDeleteClick = (id: string) => {
     setTransacaoToDelete(id);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (transacaoToDelete !== null) {
-      setTransacoes(transacoes.filter(t => t.id !== transacaoToDelete));
+      await deleteTransacao(transacaoToDelete);
       setTransacaoToDelete(null);
     }
   };
+
+  // Get categories from tipos_transacao
+  const categorias = tiposTransacao.map(t => t.nome);
 
   // Filtered transactions
   const filteredTransacoes = transacoes.filter(t => {
@@ -83,6 +88,14 @@ const OperationsView = () => {
   const entradasProjetadas = projetadas.filter(t => t.tipo === 'entrada').reduce((acc, t) => acc + t.valor, 0);
   const saidasProjetadas = projetadas.filter(t => t.tipo === 'saida').reduce((acc, t) => acc + t.valor, 0);
   const saldoProjetado = saldoAtual + entradasProjetadas - saidasProjetadas;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-slide-up">
@@ -204,7 +217,7 @@ const OperationsView = () => {
                 onChange={e => setFormData({...formData, categoria: e.target.value})} 
                 className="input-field"
               >
-                {CATEGORIAS_TRANSACAO.map(cat => (
+                {categorias.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>

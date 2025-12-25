@@ -1,22 +1,22 @@
 import { useState } from 'react';
-import { Plus, Edit2, Trash2, MapPin, Building2, TrendingUp, Search } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, Building2, TrendingUp, Search, Loader2 } from 'lucide-react';
 import { EJ } from '@/types';
-import { MOCK_EJS, REGIOES } from '@/data/mockData';
+import { REGIOES } from '@/data/mockData';
 import { formatCurrency, formatPercentage, formatCNPJ } from '@/utils/formatters';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import { useEJs } from '@/hooks/useEJs';
 
 const DDRView = () => {
-  const [ejs, setEjs] = useState<EJ[]>(MOCK_EJS);
-  const [ejToDelete, setEjToDelete] = useState<number | null>(null);
+  const { ejs, loading, createEJ, updateEJ, deleteEJ } = useEJs();
+  const [ejToDelete, setEjToDelete] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRegiao, setFilterRegiao] = useState<string>('');
   const [filterCluster, setFilterCluster] = useState<string>('');
   
   // Form state
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [formData, setFormData] = useState<EJ>({
-    id: 0,
+  const [formData, setFormData] = useState<Omit<EJ, 'id'> & { id?: string }>({
     nome: '',
     cluster: 1,
     cnpj: '',
@@ -37,7 +37,6 @@ const DDRView = () => {
       setIsEditing(true);
     } else {
       setFormData({
-        id: 0,
         nome: '',
         cluster: 1,
         cnpj: '',
@@ -55,25 +54,29 @@ const DDRView = () => {
     setIsFormOpen(true);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const faturamentoAtual = (formData.faturamentoQ1 || 0) + (formData.faturamentoQ2 || 0) + (formData.faturamentoQ3 || 0) + (formData.faturamentoQ4 || 0);
     
-    if (isEditing) {
-      setEjs(ejs.map(item => item.id === formData.id ? { ...formData, faturamentoAtual } : item));
-    } else {
-      setEjs([...ejs, { ...formData, id: Date.now(), faturamentoAtual }]);
+    try {
+      if (isEditing && formData.id) {
+        await updateEJ(formData.id, { ...formData, faturamentoAtual });
+      } else {
+        await createEJ({ ...formData, faturamentoAtual });
+      }
+      setIsFormOpen(false);
+    } catch (error) {
+      // Error handled in hook
     }
-    setIsFormOpen(false);
   };
 
-  const handleDeleteClick = (id: number) => {
+  const handleDeleteClick = (id: string) => {
     setEjToDelete(id);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (ejToDelete !== null) {
-      setEjs(ejs.filter(e => e.id !== ejToDelete));
+      await deleteEJ(ejToDelete);
       setEjToDelete(null);
     }
   };
@@ -113,6 +116,14 @@ const DDRView = () => {
   const totalFaturamento = ejs.reduce((acc, ej) => acc + ej.faturamentoAtual, 0);
   const totalMeta = ejs.reduce((acc, ej) => acc + ej.faturamentoMeta, 0);
   const avgProgress = formatPercentage(totalFaturamento, totalMeta);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-slide-up">
@@ -429,7 +440,7 @@ const DDRView = () => {
                 <div className="h-2 bg-secondary rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-gradient-to-r from-accent to-accent-glow rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(progress, 100)}%` }}
+                    style={{ width: `${Math.min(Number(progress), 100)}%` }}
                   />
                 </div>
                 <div className="flex justify-between text-xs text-muted-foreground">
@@ -449,7 +460,7 @@ const DDRView = () => {
                   <div key={q.label} className="text-center">
                     <p className="text-[10px] text-muted-foreground font-medium">{q.label}</p>
                     <p className="text-xs font-bold text-foreground">
-                      {q.value ? formatCurrency(q.value).replace('R$', '').trim() : '-'}
+                      {formatCurrency(q.value || 0).replace('R$', '').trim()}
                     </p>
                   </div>
                 ))}
