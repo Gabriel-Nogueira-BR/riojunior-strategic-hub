@@ -1,5 +1,5 @@
 export interface Evento {
-  id: number;
+  id: string;
   nome: string;
   dataInicio: string;
   dataFim: string;
@@ -9,7 +9,7 @@ export interface Evento {
 }
 
 export interface EJ {
-  id: number;
+  id: string;
   nome: string;
   cluster: 1 | 2 | 3 | 4 | 5;
   cnpj: string;
@@ -24,15 +24,110 @@ export interface EJ {
 }
 
 export interface Transacao {
-  id: number;
+  id: string;
   descricao: string;
   valor: number;
   tipo: 'entrada' | 'saida';
   categoria: string;
   data: string;
   status: 'realizado' | 'projetado';
+  isRecorrente?: boolean;
+  recorrenciaMeses?: number;
+  ejId?: string;
+  parceiroNome?: string;
+  custoEmbutido?: number;
+  jurosAplicados?: number;
 }
 
-export type TabType = 'calendar' | 'ddr' | 'operations' | 'presidency' | 'business' | 'formation';
+export interface TipoTransacao {
+  id: string;
+  nome: string;
+  tipo: 'entrada' | 'saida' | 'ambos';
+}
+
+export interface Anuidade {
+  id: string;
+  ejId: string;
+  ano: number;
+  valor: number;
+  dataVencimento: string;
+  dataPagamento?: string;
+  status: 'pendente' | 'pago' | 'atrasado';
+  jurosPercentual: number;
+  valorJuros: number;
+  ejNome?: string;
+}
+
+export interface Documento {
+  id: string;
+  nome: string;
+  etapa: 1 | 2 | 3 | 4;
+  descricao?: string;
+}
+
+export interface EntregaDocumento {
+  id: string;
+  ejId: string;
+  documentoId: string;
+  dataEntrega?: string;
+  entregue: boolean;
+  ejNome?: string;
+  documentoNome?: string;
+  documentoEtapa?: number;
+}
+
+export interface OKREstrategica {
+  id: string;
+  titulo: string;
+  descricao?: string;
+  ano: number;
+}
+
+export interface Objetivo {
+  id: string;
+  titulo: string;
+  descricao?: string;
+  nivel: 'estrategico' | 'tatico' | 'operacional';
+  okrEstrategicaId?: string;
+  diretoria?: string;
+  objetivoPaiId?: string;
+  keyResults?: KeyResult[];
+}
+
+export interface KeyResult {
+  id: string;
+  objetivoId: string;
+  titulo: string;
+  descricao?: string;
+  tipoMetrica: 'valor' | 'quantidade' | 'porcentagem';
+  meta: number;
+  atual: number;
+  unidade?: string;
+}
+
+export interface FaturamentoMensal {
+  id: string;
+  ejId: string;
+  ano: number;
+  mes: number;
+  valor: number;
+  metaMes: number;
+}
+
+// Faróis de faturamento
+export type FarolStatus = 'azul' | 'verde' | 'amarelo' | 'vermelho' | 'preto';
+
+export type TabType = 'calendar' | 'ddr' | 'operations' | 'presidency' | 'business' | 'formation' | 'council' | 'strategic';
 
 export type ViewMode = 'list' | 'month' | 'year';
+
+export const DIRETORIAS = [
+  'Presidência Executiva',
+  'Presidência do Conselho',
+  'VP Negócios',
+  'Operações',
+  'DDR',
+  'Formação Empreendedora'
+] as const;
+
+export type Diretoria = typeof DIRETORIAS[number];

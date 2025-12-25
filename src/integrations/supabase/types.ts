@@ -14,7 +14,458 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      anuidades: {
+        Row: {
+          ano: number
+          created_at: string
+          data_pagamento: string | null
+          data_vencimento: string
+          ej_id: string
+          id: string
+          juros_percentual: number | null
+          status: string
+          valor: number
+          valor_juros: number | null
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento: string
+          ej_id: string
+          id?: string
+          juros_percentual?: number | null
+          status: string
+          valor: number
+          valor_juros?: number | null
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento?: string
+          ej_id?: string
+          id?: string
+          juros_percentual?: number | null
+          status?: string
+          valor?: number
+          valor_juros?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anuidades_ej_id_fkey"
+            columns: ["ej_id"]
+            isOneToOne: false
+            referencedRelation: "ejs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documentos: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          etapa: number
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          etapa: number
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          etapa?: number
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      ejs: {
+        Row: {
+          cluster: number
+          cnpj: string
+          created_at: string
+          faturamento_atual: number
+          faturamento_meta: number
+          faturamento_q1: number | null
+          faturamento_q2: number | null
+          faturamento_q3: number | null
+          faturamento_q4: number | null
+          id: string
+          localizacao: string
+          nome: string
+          regiao: string
+          updated_at: string
+        }
+        Insert: {
+          cluster: number
+          cnpj: string
+          created_at?: string
+          faturamento_atual?: number
+          faturamento_meta?: number
+          faturamento_q1?: number | null
+          faturamento_q2?: number | null
+          faturamento_q3?: number | null
+          faturamento_q4?: number | null
+          id?: string
+          localizacao: string
+          nome: string
+          regiao: string
+          updated_at?: string
+        }
+        Update: {
+          cluster?: number
+          cnpj?: string
+          created_at?: string
+          faturamento_atual?: number
+          faturamento_meta?: number
+          faturamento_q1?: number | null
+          faturamento_q2?: number | null
+          faturamento_q3?: number | null
+          faturamento_q4?: number | null
+          id?: string
+          localizacao?: string
+          nome?: string
+          regiao?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      entregas_documentos: {
+        Row: {
+          created_at: string
+          data_entrega: string | null
+          documento_id: string
+          ej_id: string
+          entregue: boolean
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_entrega?: string | null
+          documento_id: string
+          ej_id: string
+          entregue?: boolean
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_entrega?: string | null
+          documento_id?: string
+          ej_id?: string
+          entregue?: boolean
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entregas_documentos_documento_id_fkey"
+            columns: ["documento_id"]
+            isOneToOne: false
+            referencedRelation: "documentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entregas_documentos_ej_id_fkey"
+            columns: ["ej_id"]
+            isOneToOne: false
+            referencedRelation: "ejs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eventos: {
+        Row: {
+          created_at: string
+          data_fim: string
+          data_inicio: string
+          diretorias: string[] | null
+          id: string
+          nome: string
+          pauta: string | null
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_fim: string
+          data_inicio: string
+          diretorias?: string[] | null
+          id?: string
+          nome: string
+          pauta?: string | null
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_fim?: string
+          data_inicio?: string
+          diretorias?: string[] | null
+          id?: string
+          nome?: string
+          pauta?: string | null
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      faturamento_mensal: {
+        Row: {
+          ano: number
+          created_at: string
+          ej_id: string
+          id: string
+          mes: number
+          meta_mes: number
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          ej_id: string
+          id?: string
+          mes: number
+          meta_mes?: number
+          updated_at?: string
+          valor?: number
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          ej_id?: string
+          id?: string
+          mes?: number
+          meta_mes?: number
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faturamento_mensal_ej_id_fkey"
+            columns: ["ej_id"]
+            isOneToOne: false
+            referencedRelation: "ejs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      key_results: {
+        Row: {
+          atual: number
+          created_at: string
+          descricao: string | null
+          id: string
+          meta: number
+          objetivo_id: string
+          tipo_metrica: string
+          titulo: string
+          unidade: string | null
+          updated_at: string
+        }
+        Insert: {
+          atual?: number
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          meta: number
+          objetivo_id: string
+          tipo_metrica: string
+          titulo: string
+          unidade?: string | null
+          updated_at?: string
+        }
+        Update: {
+          atual?: number
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          meta?: number
+          objetivo_id?: string
+          tipo_metrica?: string
+          titulo?: string
+          unidade?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "key_results_objetivo_id_fkey"
+            columns: ["objetivo_id"]
+            isOneToOne: false
+            referencedRelation: "objetivos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      objetivos: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          diretoria: string | null
+          id: string
+          nivel: string
+          objetivo_pai_id: string | null
+          okr_estrategica_id: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          diretoria?: string | null
+          id?: string
+          nivel: string
+          objetivo_pai_id?: string | null
+          okr_estrategica_id?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          diretoria?: string | null
+          id?: string
+          nivel?: string
+          objetivo_pai_id?: string | null
+          okr_estrategica_id?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "objetivos_objetivo_pai_id_fkey"
+            columns: ["objetivo_pai_id"]
+            isOneToOne: false
+            referencedRelation: "objetivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "objetivos_okr_estrategica_id_fkey"
+            columns: ["okr_estrategica_id"]
+            isOneToOne: false
+            referencedRelation: "okrs_estrategicas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      okrs_estrategicas: {
+        Row: {
+          ano: number
+          created_at: string
+          descricao: string | null
+          id: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          ano?: number
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tipos_transacao: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          tipo: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
+      transacoes: {
+        Row: {
+          categoria: string
+          created_at: string
+          custo_embutido: number | null
+          data: string
+          descricao: string
+          ej_id: string | null
+          id: string
+          is_recorrente: boolean
+          juros_aplicados: number | null
+          parceiro_nome: string | null
+          recorrencia_meses: number | null
+          status: string
+          tipo: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          custo_embutido?: number | null
+          data: string
+          descricao: string
+          ej_id?: string | null
+          id?: string
+          is_recorrente?: boolean
+          juros_aplicados?: number | null
+          parceiro_nome?: string | null
+          recorrencia_meses?: number | null
+          status: string
+          tipo: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          custo_embutido?: number | null
+          data?: string
+          descricao?: string
+          ej_id?: string | null
+          id?: string
+          is_recorrente?: boolean
+          juros_aplicados?: number | null
+          parceiro_nome?: string | null
+          recorrencia_meses?: number | null
+          status?: string
+          tipo?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transacoes_ej_id_fkey"
+            columns: ["ej_id"]
+            isOneToOne: false
+            referencedRelation: "ejs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

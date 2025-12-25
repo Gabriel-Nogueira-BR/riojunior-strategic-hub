@@ -6,7 +6,9 @@ import {
   GraduationCap, 
   Crown,
   TrendingUp,
-  User
+  User,
+  Target,
+  Users
 } from 'lucide-react';
 import { TabType } from '@/types';
 
@@ -65,6 +67,13 @@ const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
           active={activeTab === 'calendar'} 
           onClick={() => setActiveTab('calendar')} 
         />
+        <SidebarItem 
+          icon={Target} 
+          label="Painel Estratégico" 
+          active={activeTab === 'strategic'} 
+          onClick={() => setActiveTab('strategic')}
+          badge="Novo"
+        />
         
         <p className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-wider px-4 mb-3 mt-6">Diretorias</p>
         <SidebarItem 
@@ -72,6 +81,13 @@ const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
           label="Presidência Executiva" 
           active={activeTab === 'presidency'} 
           onClick={() => setActiveTab('presidency')}
+          badge="Em breve"
+        />
+        <SidebarItem 
+          icon={Users} 
+          label="Presidência do Conselho" 
+          active={activeTab === 'council'} 
+          onClick={() => setActiveTab('council')}
           badge="Em breve"
         />
         <SidebarItem 

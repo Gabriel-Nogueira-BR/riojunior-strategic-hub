@@ -20,11 +20,25 @@ const Index = () => {
         return <DDRView />;
       case 'operations':
         return <OperationsView />;
+      case 'strategic':
+        return (
+          <PlaceholderView 
+            title="Painel Estratégico" 
+            description="Esta seção está em desenvolvimento. Aqui você encontrará as OKRs Estratégicas, Táticas e Operacionais com acompanhamento de Key Results." 
+          />
+        );
       case 'presidency':
         return (
           <PlaceholderView 
             title="Presidência Executiva" 
             description="Esta seção será desenvolvida em breve. Aqui você encontrará informações estratégicas da presidência, acompanhamento de metas institucionais e dashboards executivos." 
+          />
+        );
+      case 'council':
+        return (
+          <PlaceholderView 
+            title="Presidência do Conselho" 
+            description="Esta seção será desenvolvida em breve. Aqui você encontrará informações e atividades relacionadas ao Conselho da Federação." 
           />
         );
       case 'business':
