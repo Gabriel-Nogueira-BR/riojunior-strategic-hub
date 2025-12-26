@@ -119,7 +119,6 @@ const OperationsView = () => {
             <div>
               <label className="label-sm">Descrição</label>
               <input 
-                required 
                 type="text" 
                 value={formData.descricao} 
                 onChange={e => setFormData({...formData, descricao: e.target.value})} 
@@ -132,7 +131,6 @@ const OperationsView = () => {
               <div>
                 <label className="label-sm">Valor</label>
                 <input 
-                  required 
                   type="number" 
                   step="0.01"
                   value={formData.valor} 
@@ -144,7 +142,6 @@ const OperationsView = () => {
               <div>
                 <label className="label-sm">Data</label>
                 <input 
-                  required 
                   type="date" 
                   value={formData.data} 
                   onChange={e => setFormData({...formData, data: e.target.value})} 
