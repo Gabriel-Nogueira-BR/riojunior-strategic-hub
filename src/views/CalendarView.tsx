@@ -28,7 +28,6 @@ const CalendarView = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.nome || !formData.dataInicio || !formData.tipo) return;
 
     try {
       if (isEditing && formData.id) {

@@ -148,7 +148,6 @@ const DDRView = () => {
               <div>
                 <label className="label-sm">Nome da EJ</label>
                 <input 
-                  required 
                   type="text" 
                   value={formData.nome} 
                   onChange={e => setFormData({...formData, nome: e.target.value})} 
@@ -159,7 +158,6 @@ const DDRView = () => {
               <div>
                 <label className="label-sm">CNPJ</label>
                 <input 
-                  required 
                   type="text" 
                   value={formData.cnpj} 
                   onChange={e => setFormData({...formData, cnpj: formatCNPJ(e.target.value)})} 
@@ -199,7 +197,6 @@ const DDRView = () => {
             <div>
               <label className="label-sm">Localização</label>
               <input 
-                required 
                 type="text" 
                 value={formData.localizacao} 
                 onChange={e => setFormData({...formData, localizacao: e.target.value})} 
