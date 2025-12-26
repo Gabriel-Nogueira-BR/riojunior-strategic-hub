@@ -61,6 +61,42 @@ export type Database = {
           },
         ]
       }
+      ciclos: {
+        Row: {
+          ano: number
+          created_at: string
+          data_fim: string | null
+          data_inicio: string | null
+          id: string
+          nome: string
+          numero: number
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          ano?: number
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          id?: string
+          nome: string
+          numero?: number
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          id?: string
+          nome?: string
+          numero?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       documentos: {
         Row: {
           created_at: string
@@ -307,6 +343,7 @@ export type Database = {
       }
       objetivos: {
         Row: {
+          ciclo_id: string | null
           created_at: string
           descricao: string | null
           diretoria: string | null
@@ -318,6 +355,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ciclo_id?: string | null
           created_at?: string
           descricao?: string | null
           diretoria?: string | null
@@ -329,6 +367,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ciclo_id?: string | null
           created_at?: string
           descricao?: string | null
           diretoria?: string | null
@@ -340,6 +379,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "objetivos_ciclo_id_fkey"
+            columns: ["ciclo_id"]
+            isOneToOne: false
+            referencedRelation: "ciclos"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "objetivos_objetivo_pai_id_fkey"
             columns: ["objetivo_pai_id"]
