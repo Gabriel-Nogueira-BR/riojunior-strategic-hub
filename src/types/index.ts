@@ -76,11 +76,22 @@ export interface EntregaDocumento {
   documentoEtapa?: number;
 }
 
+export interface Ciclo {
+  id: string;
+  nome: string;
+  tipo: 'estrategico' | 'tatico' | 'operacional';
+  numero: number;
+  ano: number;
+  dataInicio?: string;
+  dataFim?: string;
+}
+
 export interface OKREstrategica {
   id: string;
   titulo: string;
   descricao?: string;
   ano: number;
+  objetivos?: Objetivo[];
 }
 
 export interface Objetivo {
@@ -91,6 +102,7 @@ export interface Objetivo {
   okrEstrategicaId?: string;
   diretoria?: string;
   objetivoPaiId?: string;
+  cicloId?: string;
   keyResults?: KeyResult[];
 }
 
@@ -129,5 +141,14 @@ export const DIRETORIAS = [
   'DDR',
   'Formação Empreendedora'
 ] as const;
+
+export const DIRETORIAS_SIGLAS: Record<string, string> = {
+  'Presidência Executiva': 'PRESEX',
+  'Presidência do Conselho': 'PRESCON',
+  'VP Negócios': 'VPNEG',
+  'Operações': 'DOP',
+  'DDR': 'DDR',
+  'Formação Empreendedora': 'DFE'
+};
 
 export type Diretoria = typeof DIRETORIAS[number];

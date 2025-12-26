@@ -72,7 +72,6 @@ const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
           label="Painel Estratégico" 
           active={activeTab === 'strategic'} 
           onClick={() => setActiveTab('strategic')}
-          badge="Novo"
         />
         
         <p className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-wider px-4 mb-3 mt-6">Diretorias</p>

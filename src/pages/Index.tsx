@@ -6,6 +6,7 @@ import MobileMenu from '@/components/layout/MobileMenu';
 import CalendarView from '@/views/CalendarView';
 import DDRView from '@/views/DDRView';
 import OperationsView from '@/views/OperationsView';
+import StrategicPanelView from '@/views/StrategicPanelView';
 import PlaceholderView from '@/views/PlaceholderView';
 
 const Index = () => {
@@ -21,12 +22,7 @@ const Index = () => {
       case 'operations':
         return <OperationsView />;
       case 'strategic':
-        return (
-          <PlaceholderView 
-            title="Painel Estratégico" 
-            description="Esta seção está em desenvolvimento. Aqui você encontrará as OKRs Estratégicas, Táticas e Operacionais com acompanhamento de Key Results." 
-          />
-        );
+        return <StrategicPanelView />;
       case 'presidency':
         return (
           <PlaceholderView 
