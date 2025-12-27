@@ -6,7 +6,11 @@ import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { useTransacoes } from '@/hooks/useTransacoes';
 
-const OperationsView = () => {
+interface OperationsViewProps {
+  selectedYear: number;
+}
+
+const OperationsView = ({ selectedYear }: OperationsViewProps) => {
   const { transacoes, tiposTransacao, loading, createTransacao, updateTransacao, deleteTransacao } = useTransacoes();
   const [transacaoToDelete, setTransacaoToDelete] = useState<string | null>(null);
   const [filterTipo, setFilterTipo] = useState<string>('');

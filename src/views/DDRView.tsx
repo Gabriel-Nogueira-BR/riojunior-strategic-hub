@@ -7,7 +7,11 @@ import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { useEJs } from '@/hooks/useEJs';
 
-const DDRView = () => {
+interface DDRViewProps {
+  selectedYear: number;
+}
+
+const DDRView = ({ selectedYear }: DDRViewProps) => {
   const { ejs, loading, createEJ, updateEJ, deleteEJ } = useEJs();
   const [ejToDelete, setEjToDelete] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
