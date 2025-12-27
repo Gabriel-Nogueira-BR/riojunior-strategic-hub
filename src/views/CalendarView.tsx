@@ -1,24 +1,43 @@
 import { useState } from 'react';
-import { Calendar, Plus, Edit2, Trash2, CalendarDays, List, Grid3X3, Loader2 } from 'lucide-react';
-import { Evento, ViewMode } from '@/types';
-import { TIPOS_EVENTO, DIRETORIAS } from '@/data/mockData';
+import { Calendar, Plus, Edit2, Trash2, CalendarDays, List, Grid3X3, Loader2, Settings } from 'lucide-react';
+import { Evento, ViewMode, DIRETORIAS } from '@/types';
 import { formatDateString } from '@/utils/formatters';
+import { getDiretoriaSolidColor, DIRETORIA_COLORS } from '@/utils/diretoriaColors';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import DateRangePicker from '@/components/calendar/DateRangePicker';
 import MonthlyCalendarView from '@/components/calendar/MonthlyCalendarView';
 import YearlyCalendarView from '@/components/calendar/YearlyCalendarView';
 import { useEventos } from '@/hooks/useEventos';
+import { useTiposEvento, TipoEvento } from '@/hooks/useTiposEvento';
 
-const CalendarView = () => {
+interface CalendarViewProps {
+  selectedYear: number;
+}
+
+const CalendarView = ({ selectedYear }: CalendarViewProps) => {
   const { eventos, loading, createEvento, updateEvento, deleteEvento } = useEventos();
+  const { tiposEvento, loading: loadingTipos, createTipoEvento, updateTipoEvento, deleteTipoEvento } = useTiposEvento();
+  
   const [formData, setFormData] = useState<Omit<Evento, 'id'> & { id?: string }>({ 
     nome: '', dataInicio: '', dataFim: '', tipo: '', pauta: '', diretorias: [] 
   });
   const [isEditing, setIsEditing] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);
+  
+  // Tipos de evento management
+  const [showTiposModal, setShowTiposModal] = useState(false);
+  const [tipoForm, setTipoForm] = useState<Partial<TipoEvento>>({ nome: '', cor: '#3b82f6' });
+  const [editingTipoId, setEditingTipoId] = useState<string | null>(null);
+  const [tipoToDelete, setTipoToDelete] = useState<string | null>(null);
+
+  // Filter events by year
+  const filteredEventos = eventos.filter(ev => {
+    const evYear = new Date(ev.dataInicio + 'T12:00:00').getFullYear();
+    return evYear === selectedYear;
+  });
 
   const resetForm = () => {
     setFormData({ nome: '', dataInicio: '', dataFim: '', tipo: '', pauta: '', diretorias: [] });
@@ -67,7 +86,32 @@ const CalendarView = () => {
     }));
   };
 
-  if (loading) {
+  // Tipos de evento handlers
+  const handleSaveTipo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tipoForm.nome) return;
+    
+    try {
+      if (editingTipoId) {
+        await updateTipoEvento(editingTipoId, tipoForm);
+      } else {
+        await createTipoEvento(tipoForm as Omit<TipoEvento, 'id'>);
+      }
+      setTipoForm({ nome: '', cor: '#3b82f6' });
+      setEditingTipoId(null);
+    } catch (error) {
+      // Error handled in hook
+    }
+  };
+
+  const confirmDeleteTipo = async () => {
+    if (tipoToDelete) {
+      await deleteTipoEvento(tipoToDelete);
+      setTipoToDelete(null);
+    }
+  };
+
+  if (loading || loadingTipos) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -77,7 +121,7 @@ const CalendarView = () => {
 
   return (
     <div className="space-y-6 animate-slide-up">
-      {/* Delete Confirmation Modal */}
+      {/* Delete Event Confirmation Modal */}
       {eventToDelete !== null && (
         <ConfirmModal
           title="Confirmar Exclusão"
@@ -87,45 +131,125 @@ const CalendarView = () => {
         />
       )}
 
+      {/* Delete Tipo Confirmation Modal */}
+      {tipoToDelete !== null && (
+        <ConfirmModal
+          title="Confirmar Exclusão"
+          message="Essa ação excluirá o tipo de evento permanentemente."
+          onConfirm={confirmDeleteTipo}
+          onCancel={() => setTipoToDelete(null)}
+        />
+      )}
+
+      {/* Tipos de Evento Modal */}
+      {showTiposModal && (
+        <Modal title="Gerenciar Tipos de Evento" onClose={() => setShowTiposModal(false)}>
+          <div className="space-y-4">
+            <form onSubmit={handleSaveTipo} className="flex gap-2">
+              <input
+                type="text"
+                value={tipoForm.nome || ''}
+                onChange={e => setTipoForm({ ...tipoForm, nome: e.target.value })}
+                className="input-field flex-1"
+                placeholder="Nome do tipo"
+              />
+              <input
+                type="color"
+                value={tipoForm.cor || '#3b82f6'}
+                onChange={e => setTipoForm({ ...tipoForm, cor: e.target.value })}
+                className="w-12 h-10 rounded border border-border cursor-pointer"
+              />
+              <button type="submit" className="btn-primary">
+                {editingTipoId ? 'Salvar' : 'Adicionar'}
+              </button>
+              {editingTipoId && (
+                <button 
+                  type="button" 
+                  onClick={() => { setEditingTipoId(null); setTipoForm({ nome: '', cor: '#3b82f6' }); }}
+                  className="btn-secondary"
+                >
+                  Cancelar
+                </button>
+              )}
+            </form>
+
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {tiposEvento.map(tipo => (
+                <div key={tipo.id} className="flex items-center gap-2 p-2 bg-secondary/50 rounded-lg group">
+                  <div 
+                    className="w-4 h-4 rounded-full shrink-0"
+                    style={{ backgroundColor: tipo.cor }}
+                  />
+                  <span className="flex-1 text-sm text-foreground">{tipo.nome}</span>
+                  <button
+                    onClick={() => { setTipoForm(tipo); setEditingTipoId(tipo.id); }}
+                    className="p-1 text-muted-foreground hover:text-rio-gold opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Edit2 size={14} />
+                  </button>
+                  <button
+                    onClick={() => setTipoToDelete(tipo.id)}
+                    className="p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Calendarização</h2>
+          <h2 className="text-2xl font-bold text-foreground">Calendarização {selectedYear}</h2>
           <p className="text-muted-foreground">Gerencie o cronograma de eventos da Federação.</p>
         </div>
         
-        {/* View Switcher */}
-        <div className="flex bg-card rounded-lg p-1 border border-border shadow-sm">
+        <div className="flex items-center gap-2">
+          {/* Settings Button */}
           <button 
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md transition-all flex items-center gap-2 text-xs font-bold ${
-              viewMode === 'list' 
-                ? 'bg-primary text-primary-foreground shadow-sm' 
-                : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-            }`}
+            onClick={() => setShowTiposModal(true)}
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors"
+            title="Gerenciar tipos de evento"
           >
-            <List size={16} /> Lista
+            <Settings size={20} />
           </button>
-          <button 
-            onClick={() => setViewMode('month')}
-            className={`p-2 rounded-md transition-all flex items-center gap-2 text-xs font-bold ${
-              viewMode === 'month' 
-                ? 'bg-primary text-primary-foreground shadow-sm' 
-                : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-            }`}
-          >
-            <Calendar size={16} /> Mês
-          </button>
-          <button 
-            onClick={() => setViewMode('year')}
-            className={`p-2 rounded-md transition-all flex items-center gap-2 text-xs font-bold ${
-              viewMode === 'year' 
-                ? 'bg-primary text-primary-foreground shadow-sm' 
-                : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-            }`}
-          >
-            <Grid3X3 size={16} /> Ano
-          </button>
+
+          {/* View Switcher */}
+          <div className="flex bg-card rounded-lg p-1 border border-border shadow-sm">
+            <button 
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-md transition-all flex items-center gap-2 text-xs font-bold ${
+                viewMode === 'list' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+              }`}
+            >
+              <List size={16} /> Lista
+            </button>
+            <button 
+              onClick={() => setViewMode('month')}
+              className={`p-2 rounded-md transition-all flex items-center gap-2 text-xs font-bold ${
+                viewMode === 'month' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+              }`}
+            >
+              <Calendar size={16} /> Mês
+            </button>
+            <button 
+              onClick={() => setViewMode('year')}
+              className={`p-2 rounded-md transition-all flex items-center gap-2 text-xs font-bold ${
+                viewMode === 'year' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+              }`}
+            >
+              <Grid3X3 size={16} /> Ano
+            </button>
+          </div>
         </div>
       </div>
 
@@ -164,8 +288,8 @@ const CalendarView = () => {
                 className="input-field"
               >
                 <option value="">Selecione o tipo...</option>
-                {TIPOS_EVENTO.map(tipo => (
-                  <option key={tipo} value={tipo}>{tipo}</option>
+                {tiposEvento.map(tipo => (
+                  <option key={tipo.id} value={tipo.nome}>{tipo.nome}</option>
                 ))}
               </select>
             </div>
@@ -215,9 +339,12 @@ const CalendarView = () => {
                     onClick={() => toggleDiretoria(diretoria)}
                     className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                       formData.diretorias.includes(diretoria)
-                        ? 'bg-primary text-primary-foreground border-primary'
+                        ? 'text-white border-transparent'
                         : 'bg-secondary text-secondary-foreground border-border hover:border-primary/50'
                     }`}
+                    style={formData.diretorias.includes(diretoria) 
+                      ? { backgroundColor: DIRETORIA_COLORS[diretoria] } 
+                      : undefined}
                   >
                     {diretoria}
                   </button>
@@ -253,79 +380,89 @@ const CalendarView = () => {
         <div className="lg:col-span-2 space-y-4">
           {viewMode === 'list' && (
             <>
-              {eventos.map((evento) => (
-                <div 
-                  key={evento.id} 
-                  className="card-elevated p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:border-primary/30"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="h-14 w-14 bg-accent/10 rounded-xl flex flex-col items-center justify-center text-accent border border-accent/20 shrink-0">
-                      <span className="text-xs font-bold uppercase">
-                        {new Date(evento.dataInicio + 'T12:00:00').toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
-                      </span>
-                      <span className="text-xl font-bold leading-none">
-                        {new Date(evento.dataInicio + 'T12:00:00').getDate()}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-foreground text-lg">{evento.nome}</h4>
-                      <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-2">
-                        <span className="bg-secondary px-2 py-0.5 rounded text-xs font-medium text-secondary-foreground border border-border">
-                          {evento.tipo}
+              {filteredEventos.map((evento) => {
+                const bgColor = getDiretoriaSolidColor(evento.diretorias);
+                return (
+                  <div 
+                    key={evento.id} 
+                    className="card-elevated p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:border-primary/30"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div 
+                        className="h-14 w-14 rounded-xl flex flex-col items-center justify-center text-white border shrink-0"
+                        style={{ backgroundColor: bgColor, borderColor: bgColor }}
+                      >
+                        <span className="text-xs font-bold uppercase">
+                          {new Date(evento.dataInicio + 'T12:00:00').toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
                         </span>
-                        <span className="text-border">•</span>
-                        <span>
-                          {formatDateString(evento.dataInicio)} 
-                          {evento.dataInicio !== evento.dataFim && ` até ${formatDateString(evento.dataFim)}`}
+                        <span className="text-xl font-bold leading-none">
+                          {new Date(evento.dataInicio + 'T12:00:00').getDate()}
                         </span>
                       </div>
-                      {evento.diretorias.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-2">
-                          {evento.diretorias.map(dir => (
-                            <span key={dir} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-medium">
-                              {dir}
-                            </span>
-                          ))}
+                      <div className="flex-1">
+                        <h4 className="font-bold text-foreground text-lg">{evento.nome}</h4>
+                        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <span className="bg-secondary px-2 py-0.5 rounded text-xs font-medium text-secondary-foreground border border-border">
+                            {evento.tipo}
+                          </span>
+                          <span className="text-border">•</span>
+                          <span>
+                            {formatDateString(evento.dataInicio)} 
+                            {evento.dataInicio !== evento.dataFim && ` até ${formatDateString(evento.dataFim)}`}
+                          </span>
                         </div>
-                      )}
-                      {evento.pauta && (
-                        <p className="text-sm text-muted-foreground bg-secondary/50 p-3 rounded-lg border border-border italic">
-                          {evento.pauta.length > 150 ? evento.pauta.substring(0, 150) + "..." : evento.pauta}
-                        </p>
-                      )}
+                        {evento.diretorias.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {evento.diretorias.map(dir => (
+                              <span 
+                                key={dir} 
+                                className="text-[10px] px-2 py-0.5 rounded-full font-medium text-white"
+                                style={{ backgroundColor: DIRETORIA_COLORS[dir] || '#6b7280' }}
+                              >
+                                {dir}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {evento.pauta && (
+                          <p className="text-sm text-muted-foreground bg-secondary/50 p-3 rounded-lg border border-border italic">
+                            {evento.pauta.length > 150 ? evento.pauta.substring(0, 150) + "..." : evento.pauta}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 self-end md:self-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all">
+                      <button 
+                        onClick={() => handleEdit(evento)}
+                        className="p-2 text-muted-foreground hover:text-rio-gold hover:bg-rio-gold/10 rounded-lg transition-all"
+                        title="Editar"
+                      >
+                        <Edit2 size={18} />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteClick(evento.id)}
+                        className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+                        title="Excluir"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2 self-end md:self-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all">
-                    <button 
-                      onClick={() => handleEdit(evento)}
-                      className="p-2 text-muted-foreground hover:text-rio-gold hover:bg-rio-gold/10 rounded-lg transition-all"
-                      title="Editar"
-                    >
-                      <Edit2 size={18} />
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteClick(evento.id)}
-                      className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
-                      title="Excluir"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
               
-              {eventos.length === 0 && (
+              {filteredEventos.length === 0 && (
                 <div className="text-center py-12 bg-secondary/50 rounded-xl border border-dashed border-border">
                   <CalendarDays className="mx-auto h-10 w-10 text-muted-foreground/50 mb-2" />
-                  <p className="text-muted-foreground">Nenhum evento calendarizado.</p>
+                  <p className="text-muted-foreground">Nenhum evento calendarizado para {selectedYear}.</p>
                 </div>
               )}
             </>
           )}
 
-          {viewMode === 'month' && <MonthlyCalendarView events={eventos} />}
-          {viewMode === 'year' && <YearlyCalendarView events={eventos} />}
+          {viewMode === 'month' && <MonthlyCalendarView events={filteredEventos} onEventClick={handleEdit} />}
+          {viewMode === 'year' && <YearlyCalendarView events={filteredEventos} onEventClick={handleEdit} />}
         </div>
       </div>
     </div>

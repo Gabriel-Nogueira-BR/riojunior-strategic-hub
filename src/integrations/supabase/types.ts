@@ -97,6 +97,60 @@ export type Database = {
         }
         Relationships: []
       }
+      contratos: {
+        Row: {
+          ano: number
+          created_at: string
+          ej_colaboradora_id: string | null
+          ej_id: string
+          id: string
+          nome: string
+          tem_colaboracao: boolean
+          updated_at: string
+          valor: number
+          valor_ej: number
+        }
+        Insert: {
+          ano?: number
+          created_at?: string
+          ej_colaboradora_id?: string | null
+          ej_id: string
+          id?: string
+          nome: string
+          tem_colaboracao?: boolean
+          updated_at?: string
+          valor?: number
+          valor_ej?: number
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          ej_colaboradora_id?: string | null
+          ej_id?: string
+          id?: string
+          nome?: string
+          tem_colaboracao?: boolean
+          updated_at?: string
+          valor?: number
+          valor_ej?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contratos_ej_colaboradora_id_fkey"
+            columns: ["ej_colaboradora_id"]
+            isOneToOne: false
+            referencedRelation: "ejs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_ej_id_fkey"
+            columns: ["ej_id"]
+            isOneToOne: false
+            referencedRelation: "ejs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documentos: {
         Row: {
           created_at: string
@@ -426,6 +480,27 @@ export type Database = {
           id?: string
           titulo?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      tipos_evento: {
+        Row: {
+          cor: string
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          cor?: string
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          cor?: string
+          created_at?: string
+          id?: string
+          nome?: string
         }
         Relationships: []
       }

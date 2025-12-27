@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Edit2, Trash2, Target, ChevronDown, ChevronRight, Calendar, Loader2, Settings } from 'lucide-react';
+import { Plus, Edit2, Trash2, Target, ChevronDown, ChevronRight, Calendar, Loader2 } from 'lucide-react';
 import { OKREstrategica, Objetivo, KeyResult, Ciclo, DIRETORIAS, DIRETORIAS_SIGLAS } from '@/types';
 import { formatCurrency, formatDateString } from '@/utils/formatters';
 import Modal from '@/components/ui/Modal';
@@ -8,7 +8,11 @@ import { useOKRs } from '@/hooks/useOKRs';
 
 type TabView = 'estrategico' | 'tatico';
 
-const StrategicPanelView = () => {
+interface StrategicPanelViewProps {
+  selectedYear: number;
+}
+
+const StrategicPanelView = ({ selectedYear }: StrategicPanelViewProps) => {
   const {
     okrsEstrategicas,
     objetivos,
@@ -46,14 +50,15 @@ const StrategicPanelView = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string } | null>(null);
   
   // Form states
-  const [okrForm, setOkrForm] = useState<Partial<OKREstrategica>>({ ano: new Date().getFullYear() });
+  const [okrForm, setOkrForm] = useState<Partial<OKREstrategica>>({ ano: selectedYear });
   const [objetivoForm, setObjetivoForm] = useState<Partial<Objetivo>>({});
   const [krForm, setKrForm] = useState<Partial<KeyResult>>({ tipoMetrica: 'quantidade', meta: 0, atual: 0 });
-  const [cicloForm, setCicloForm] = useState<Partial<Ciclo>>({ tipo: 'tatico', numero: 1, ano: new Date().getFullYear() });
+  const [cicloForm, setCicloForm] = useState<Partial<Ciclo>>({ tipo: 'tatico', numero: 1, ano: selectedYear });
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const currentYear = new Date().getFullYear();
-  const ciclosTaticos = ciclos.filter(c => c.tipo === 'tatico' && c.ano === currentYear);
+  // Filter by selected year
+  const ciclosTaticos = ciclos.filter(c => c.tipo === 'tatico' && c.ano === selectedYear);
+  const currentYearOKRs = okrsEstrategicas.filter(o => o.ano === selectedYear);
 
   const toggleObjetivo = (id: string) => {
     setExpandedObjetivos(prev => {
@@ -67,21 +72,6 @@ const StrategicPanelView = () => {
     });
   };
 
-  // Format monetary value from cents
-  const formatMoneyInput = (value: number, tipoMetrica: string) => {
-    if (tipoMetrica === 'valor') {
-      return (value / 100).toFixed(2);
-    }
-    return value.toString();
-  };
-
-  const parseMoneyInput = (value: string, tipoMetrica: string) => {
-    if (tipoMetrica === 'valor') {
-      return Math.round(parseFloat(value || '0') * 100);
-    }
-    return parseFloat(value || '0');
-  };
-
   // Handlers
   const handleSaveOKR = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +81,7 @@ const StrategicPanelView = () => {
       await createOKREstrategica(okrForm as Omit<OKREstrategica, 'id'>);
     }
     setShowOKRModal(false);
-    setOkrForm({ ano: currentYear });
+    setOkrForm({ ano: selectedYear });
     setEditingId(null);
   };
 
@@ -127,7 +117,7 @@ const StrategicPanelView = () => {
       await createCiclo(cicloForm as Omit<Ciclo, 'id'>);
     }
     setShowCicloModal(false);
-    setCicloForm({ tipo: 'tatico', numero: 1, ano: currentYear });
+    setCicloForm({ tipo: 'tatico', numero: 1, ano: selectedYear });
     setEditingId(null);
   };
 
@@ -190,16 +180,6 @@ const StrategicPanelView = () => {
     setKrForm({ objetivoId, tipoMetrica: 'quantidade', meta: 0, atual: 0 });
     setEditingId(null);
     setShowKRModal(true);
-  };
-
-  const formatKRValue = (kr: KeyResult) => {
-    if (kr.tipoMetrica === 'valor') {
-      return formatCurrency(kr.atual / 100);
-    }
-    if (kr.tipoMetrica === 'porcentagem') {
-      return `${kr.atual}%`;
-    }
-    return kr.atual.toString();
   };
 
   const formatKRMeta = (kr: KeyResult) => {
@@ -346,19 +326,17 @@ const StrategicPanelView = () => {
   };
 
   const renderEstrategicoTab = () => {
-    const currentYearOKRs = okrsEstrategicas.filter(o => o.ano === currentYear);
-
     return (
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-lg font-bold text-foreground">OKRs Estratégicas {currentYear}</h3>
+            <h3 className="text-lg font-bold text-foreground">OKRs Estratégicas {selectedYear}</h3>
             <p className="text-sm text-muted-foreground">Objetivos estratégicos da federação</p>
           </div>
           <button
             onClick={() => {
-              setOkrForm({ ano: currentYear });
+              setOkrForm({ ano: selectedYear });
               setEditingId(null);
               setShowOKRModal(true);
             }}
@@ -372,7 +350,7 @@ const StrategicPanelView = () => {
         {currentYearOKRs.length === 0 ? (
           <div className="text-center py-12 bg-secondary/50 rounded-xl border border-dashed border-border">
             <Target className="mx-auto h-10 w-10 text-muted-foreground/50 mb-2" />
-            <p className="text-muted-foreground">Nenhuma OKR estratégica cadastrada.</p>
+            <p className="text-muted-foreground">Nenhuma OKR estratégica cadastrada para {selectedYear}.</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -464,7 +442,7 @@ const StrategicPanelView = () => {
             )}
             <button
               onClick={() => {
-                setCicloForm({ tipo: 'tatico', numero: ciclosTaticos.length + 1, ano: currentYear, nome: `${ciclosTaticos.length + 1}° Ciclo ${currentYear}` });
+                setCicloForm({ tipo: 'tatico', numero: ciclosTaticos.length + 1, ano: selectedYear, nome: `${ciclosTaticos.length + 1}° Ciclo ${selectedYear}` });
                 setEditingId(null);
                 setShowCicloModal(true);
               }}
@@ -561,7 +539,7 @@ const StrategicPanelView = () => {
               <label className="label-sm">Ano</label>
               <input
                 type="number"
-                value={okrForm.ano || currentYear}
+                value={okrForm.ano || selectedYear}
                 onChange={e => setOkrForm({ ...okrForm, ano: parseInt(e.target.value) })}
                 className="input-field"
               />
@@ -727,7 +705,7 @@ const StrategicPanelView = () => {
                 <label className="label-sm">Ano</label>
                 <input
                   type="number"
-                  value={cicloForm.ano || currentYear}
+                  value={cicloForm.ano || selectedYear}
                   onChange={e => setCicloForm({ ...cicloForm, ano: parseInt(e.target.value) })}
                   className="input-field"
                 />
@@ -763,7 +741,7 @@ const StrategicPanelView = () => {
 
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-foreground">Painel Estratégico</h2>
+        <h2 className="text-2xl font-bold text-foreground">Painel Estratégico {selectedYear}</h2>
         <p className="text-muted-foreground">Acompanhamento de OKRs Estratégicas e Táticas da RioJunior</p>
       </div>
 
@@ -777,7 +755,7 @@ const StrategicPanelView = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
           }`}
         >
-          OKRs Estratégicas {currentYear}
+          OKRs Estratégicas
         </button>
         <button
           onClick={() => setActiveTab('tatico')}

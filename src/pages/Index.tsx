@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, ChevronDown } from 'lucide-react';
 import { TabType } from '@/types';
 import Sidebar from '@/components/layout/Sidebar';
 import MobileMenu from '@/components/layout/MobileMenu';
@@ -12,17 +12,20 @@ import PlaceholderView from '@/views/PlaceholderView';
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('calendar');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  const yearOptions = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i);
 
   const renderContent = () => {
     switch (activeTab) {
       case 'calendar':
-        return <CalendarView />;
+        return <CalendarView selectedYear={selectedYear} />;
       case 'ddr':
-        return <DDRView />;
+        return <DDRView selectedYear={selectedYear} />;
       case 'operations':
-        return <OperationsView />;
+        return <OperationsView selectedYear={selectedYear} />;
       case 'strategic':
-        return <StrategicPanelView />;
+        return <StrategicPanelView selectedYear={selectedYear} />;
       case 'presidency':
         return (
           <PlaceholderView 
@@ -52,7 +55,7 @@ const Index = () => {
           />
         );
       default:
-        return <CalendarView />;
+        return <CalendarView selectedYear={selectedYear} />;
     }
   };
 
@@ -71,20 +74,37 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="flex-1 lg:ml-72 flex flex-col min-h-screen">
-        {/* Mobile Header */}
-        <header className="lg:hidden h-16 bg-card border-b border-border sticky top-0 z-10 px-4 flex items-center justify-between">
+        {/* Header with Year Selector */}
+        <header className="h-16 bg-card border-b border-border sticky top-0 z-10 px-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setIsMobileMenuOpen(true)} 
-              className="p-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
+              className="p-2 text-foreground hover:bg-secondary rounded-lg transition-colors lg:hidden"
             >
               <Menu size={24} />
             </button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 lg:hidden">
               <div className="h-8 w-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center text-primary-foreground font-bold text-xs">
                 RJ
               </div>
               <span className="font-bold text-lg text-foreground">RioJunior</span>
+            </div>
+          </div>
+
+          {/* Year Selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground hidden sm:inline">Ano de vigência:</span>
+            <div className="relative">
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+                className="appearance-none bg-primary text-primary-foreground px-4 py-2 pr-8 rounded-lg font-bold text-sm cursor-pointer hover:opacity-90 transition-opacity border-0 focus:ring-2 focus:ring-primary/50 focus:outline-none"
+              >
+                {yearOptions.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+              <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-primary-foreground pointer-events-none" />
             </div>
           </div>
         </header>
