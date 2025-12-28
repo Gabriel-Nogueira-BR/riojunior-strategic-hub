@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Plus, Edit2, Trash2, TrendingUp, TrendingDown, DollarSign, PiggyBank, ArrowUpCircle, ArrowDownCircle, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, TrendingUp, TrendingDown, DollarSign, PiggyBank, ArrowUpCircle, ArrowDownCircle, Loader2, BarChart3 } from 'lucide-react';
 import { Transacao } from '@/types';
 import { formatCurrency, formatDateString } from '@/utils/formatters';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { useTransacoes } from '@/hooks/useTransacoes';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import FinancialProjectionChart from '@/components/operations/FinancialProjectionChart';
 
 interface OperationsViewProps {
   selectedYear: number;
@@ -103,15 +105,35 @@ const OperationsView = ({ selectedYear }: OperationsViewProps) => {
 
   return (
     <div className="space-y-6 animate-slide-up">
-      {/* Delete Confirmation Modal */}
-      {transacaoToDelete !== null && (
-        <ConfirmModal
-          title="Confirmar Exclusão"
-          message="Essa ação excluirá a transação permanentemente."
-          onConfirm={confirmDelete}
-          onCancel={() => setTransacaoToDelete(null)}
-        />
-      )}
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Operações - Financeiro</h2>
+          <p className="text-muted-foreground">Controle de caixa e planejamento financeiro da RioJunior.</p>
+        </div>
+      </div>
+
+      <Tabs defaultValue="transacoes" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:inline-grid">
+          <TabsTrigger value="transacoes" className="flex items-center gap-2">
+            <DollarSign size={16} /> Transações
+          </TabsTrigger>
+          <TabsTrigger value="projecao" className="flex items-center gap-2">
+            <BarChart3 size={16} /> Projeção Financeira
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Transações Tab */}
+        <TabsContent value="transacoes" className="space-y-6">
+          {/* Delete Confirmation Modal */}
+          {transacaoToDelete !== null && (
+            <ConfirmModal
+              title="Confirmar Exclusão"
+              message="Essa ação excluirá a transação permanentemente."
+              onConfirm={confirmDelete}
+              onCancel={() => setTransacaoToDelete(null)}
+            />
+          )}
 
       {/* Form Modal */}
       {isFormOpen && (
@@ -236,12 +258,8 @@ const OperationsView = ({ selectedYear }: OperationsViewProps) => {
         </Modal>
       )}
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Operações - Financeiro</h2>
-          <p className="text-muted-foreground">Controle de caixa e planejamento financeiro da RioJunior.</p>
-        </div>
+      {/* Header with button */}
+      <div className="flex justify-end">
         <button 
           onClick={() => openForm()} 
           className="btn-primary flex items-center gap-2"
@@ -425,6 +443,13 @@ const OperationsView = ({ selectedYear }: OperationsViewProps) => {
           <p className="text-muted-foreground">Nenhuma transação encontrada.</p>
         </div>
       )}
+        </TabsContent>
+
+        {/* Projeção Tab */}
+        <TabsContent value="projecao">
+          <FinancialProjectionChart selectedYear={selectedYear} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
