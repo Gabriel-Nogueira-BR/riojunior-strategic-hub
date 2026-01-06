@@ -1,4 +1,4 @@
-import { X, Calendar, Building2, Settings, Briefcase, GraduationCap, Crown, TrendingUp } from 'lucide-react';
+import { X, Calendar, Building2, Settings, Briefcase, GraduationCap, Crown, TrendingUp, Target, Users } from 'lucide-react';
 import { TabType } from '@/types';
 
 interface MobileMenuProps {
@@ -54,9 +54,11 @@ const MobileMenu = ({ isOpen, onClose, activeTab, setActiveTab }: MobileMenuProp
         <nav className="space-y-1 flex-1">
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-4 mb-3">Principal</p>
           <MenuItem icon={Calendar} label="Calendarização" tab="calendar" />
+          <MenuItem icon={Target} label="Painel Estratégico" tab="strategic" />
           
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-4 mb-3 mt-6">Diretorias</p>
           <MenuItem icon={Crown} label="Presidência Executiva" tab="presidency" badge="Em breve" />
+          <MenuItem icon={Users} label="Presidência do Conselho" tab="council" badge="Em breve" />
           <MenuItem icon={TrendingUp} label="VP Negócios" tab="business" badge="Em breve" />
           <MenuItem icon={Settings} label="Operações" tab="operations" />
           <MenuItem icon={Building2} label="DDR (EJs)" tab="ddr" />
