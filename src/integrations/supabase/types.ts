@@ -483,6 +483,78 @@ export type Database = {
         }
         Relationships: []
       }
+      presidencia_eventos: {
+        Row: {
+          created_at: string
+          data_evento: string
+          data_idv_inicio_brainstorm: string | null
+          data_idv_inicio_terceirizada: string | null
+          data_marco_zero: string | null
+          data_pesquisa_aviso_previo: string | null
+          data_pesquisa_lancamento: string | null
+          data_pesquisa_limite_coleta: string | null
+          data_pf_aprovacao_ca: string | null
+          data_pf_inicio_elaboracao: string | null
+          dia_status_sebrae: string
+          id: string
+          nome_evento: string
+          periodicidade: string
+          prazo_idv_brainstorm: number
+          prazo_idv_terceirizada: number
+          prazo_pesquisa_conselheiros: number
+          prazo_pf_aprovacao_ca: number
+          prazo_pf_elaboracao: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_evento: string
+          data_idv_inicio_brainstorm?: string | null
+          data_idv_inicio_terceirizada?: string | null
+          data_marco_zero?: string | null
+          data_pesquisa_aviso_previo?: string | null
+          data_pesquisa_lancamento?: string | null
+          data_pesquisa_limite_coleta?: string | null
+          data_pf_aprovacao_ca?: string | null
+          data_pf_inicio_elaboracao?: string | null
+          dia_status_sebrae?: string
+          id?: string
+          nome_evento: string
+          periodicidade?: string
+          prazo_idv_brainstorm?: number
+          prazo_idv_terceirizada?: number
+          prazo_pesquisa_conselheiros?: number
+          prazo_pf_aprovacao_ca?: number
+          prazo_pf_elaboracao?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_evento?: string
+          data_idv_inicio_brainstorm?: string | null
+          data_idv_inicio_terceirizada?: string | null
+          data_marco_zero?: string | null
+          data_pesquisa_aviso_previo?: string | null
+          data_pesquisa_lancamento?: string | null
+          data_pesquisa_limite_coleta?: string | null
+          data_pf_aprovacao_ca?: string | null
+          data_pf_inicio_elaboracao?: string | null
+          dia_status_sebrae?: string
+          id?: string
+          nome_evento?: string
+          periodicidade?: string
+          prazo_idv_brainstorm?: number
+          prazo_idv_terceirizada?: number
+          prazo_pesquisa_conselheiros?: number
+          prazo_pf_aprovacao_ca?: number
+          prazo_pf_elaboracao?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tipos_evento: {
         Row: {
           cor: string

@@ -8,6 +8,7 @@ import DDRView from '@/views/DDRView';
 import OperationsView from '@/views/OperationsView';
 import StrategicPanelView from '@/views/StrategicPanelView';
 import PlaceholderView from '@/views/PlaceholderView';
+import PresidencyView from '@/views/PresidencyView';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('calendar');
@@ -27,12 +28,7 @@ const Index = () => {
       case 'strategic':
         return <StrategicPanelView selectedYear={selectedYear} />;
       case 'presidency':
-        return (
-          <PlaceholderView 
-            title="Presidência Executiva" 
-            description="Esta seção será desenvolvida em breve. Aqui você encontrará informações estratégicas da presidência, acompanhamento de metas institucionais e dashboards executivos." 
-          />
-        );
+        return <PresidencyView selectedYear={selectedYear} />;
       case 'council':
         return (
           <PlaceholderView 
