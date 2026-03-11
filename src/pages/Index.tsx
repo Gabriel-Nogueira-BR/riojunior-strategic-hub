@@ -28,12 +28,7 @@ const Index = () => {
       case 'strategic':
         return <StrategicPanelView selectedYear={selectedYear} />;
       case 'presidency':
-        return (
-          <PlaceholderView 
-            title="Presidência Executiva" 
-            description="Esta seção será desenvolvida em breve. Aqui você encontrará informações estratégicas da presidência, acompanhamento de metas institucionais e dashboards executivos." 
-          />
-        );
+        return <PresidencyView selectedYear={selectedYear} />;
       case 'council':
         return (
           <PlaceholderView 

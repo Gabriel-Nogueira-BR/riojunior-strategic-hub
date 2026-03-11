@@ -66,8 +66,10 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={eventoEdit ? 'Editar Evento' : 'Novo Evento com Cronograma Reverso'}>
+    <Modal onClose={onClose} title={eventoEdit ? 'Editar Evento' : 'Novo Evento com Cronograma Reverso'}>
       <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
         {/* Basic Info */}
         <div className="space-y-4">

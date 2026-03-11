@@ -143,13 +143,14 @@ const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEv
         />
       )}
 
-      <ConfirmModal
-        isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
-        onConfirm={async () => { if (deleteId) await deleteEvento(deleteId); setDeleteId(null); }}
-        title="Excluir Evento"
-        message="Tem certeza que deseja excluir este evento e todo o seu cronograma?"
-      />
+      {deleteId && (
+        <ConfirmModal
+          onCancel={() => setDeleteId(null)}
+          onConfirm={async () => { if (deleteId) await deleteEvento(deleteId); setDeleteId(null); }}
+          title="Excluir Evento"
+          message="Tem certeza que deseja excluir este evento e todo o seu cronograma?"
+        />
+      )}
     </div>
   );
 };
