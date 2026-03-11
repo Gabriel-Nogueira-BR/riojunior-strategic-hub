@@ -57,7 +57,7 @@ const MobileMenu = ({ isOpen, onClose, activeTab, setActiveTab }: MobileMenuProp
           <MenuItem icon={Target} label="Painel Estratégico" tab="strategic" />
           
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-4 mb-3 mt-6">Diretorias</p>
-          <MenuItem icon={Crown} label="Presidência Executiva" tab="presidency" badge="Em breve" />
+          <MenuItem icon={Crown} label="Presidência Executiva" tab="presidency" />
           <MenuItem icon={Users} label="Presidência do Conselho" tab="council" badge="Em breve" />
           <MenuItem icon={TrendingUp} label="VP Negócios" tab="business" badge="Em breve" />
           <MenuItem icon={Settings} label="Operações" tab="operations" />
