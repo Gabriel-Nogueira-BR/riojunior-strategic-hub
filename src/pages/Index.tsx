@@ -8,6 +8,7 @@ import DDRView from '@/views/DDRView';
 import OperationsView from '@/views/OperationsView';
 import StrategicPanelView from '@/views/StrategicPanelView';
 import PlaceholderView from '@/views/PlaceholderView';
+import PresidencyView from '@/views/PresidencyView';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('calendar');
