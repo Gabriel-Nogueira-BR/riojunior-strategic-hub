@@ -80,7 +80,6 @@ const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
           label="Presidência Executiva" 
           active={activeTab === 'presidency'} 
           onClick={() => setActiveTab('presidency')}
-          badge="Em breve"
         />
         <SidebarItem 
           icon={Users} 
