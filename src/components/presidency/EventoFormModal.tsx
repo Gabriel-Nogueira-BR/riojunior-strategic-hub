@@ -46,9 +46,10 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
       prazoIdvTerceirizada,
       prazoPfElaboracao,
       prazoPfAprovacaoCa,
-      prazoPesquisaConselheiros,
+      prazoAvisoPrevio,
+      prazoColetaPesquisa,
     };
-  }, [nomeEvento, dataEvento, dataReferenciaStatus, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoPesquisaConselheiros]);
+  }, [nomeEvento, dataEvento, dataReferenciaStatus, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoAvisoPrevio, prazoColetaPesquisa]);
 
   const cronograma = useMemo(() => input ? calcularCronograma(input) : null, [input]);
   const timeline = useMemo(() => input && cronograma ? gerarTimeline(input, cronograma) : [], [input, cronograma]);
