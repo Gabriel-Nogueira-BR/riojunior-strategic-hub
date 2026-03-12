@@ -136,9 +136,15 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
               <Label className="text-xs">💰 Aprovação CA</Label>
               <Input type="number" min={1} value={prazoPfAprovacaoCa} onChange={(e) => setPrazoPfAprovacaoCa(Number(e.target.value))} />
             </div>
-            <div className="space-y-1 sm:col-span-2">
-              <Label className="text-xs">🤝 Pesquisa Conselheiros</Label>
-              <Input type="number" min={1} value={prazoPesquisaConselheiros} onChange={(e) => setPrazoPesquisaConselheiros(Number(e.target.value))} />
+            <div className="space-y-1">
+              <Label className="text-xs">🤝 Aviso Prévio</Label>
+              <Input type="number" min={1} value={prazoAvisoPrevio} onChange={(e) => setPrazoAvisoPrevio(Number(e.target.value))} />
+              <p className="text-[10px] text-muted-foreground">Dias antes do lançamento da pesquisa</p>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">🤝 Coleta da Pesquisa</Label>
+              <Input type="number" min={1} value={prazoColetaPesquisa} onChange={(e) => setPrazoColetaPesquisa(Number(e.target.value))} />
+              <p className="text-[10px] text-muted-foreground">Duração da pesquisa (fim = Marco Zero)</p>
             </div>
           </div>
         </div>

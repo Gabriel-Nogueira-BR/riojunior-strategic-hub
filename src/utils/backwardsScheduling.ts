@@ -74,9 +74,9 @@ export function calcularCronograma(input: PresidenciaEventoInput): CronogramaCal
   const dataPfInicioElaboracao = subDays(marcoZero, input.prazoPfAprovacaoCa + input.prazoPfElaboracao);
 
   // Fluxo Articulação — independente, prazo final = Marco Zero
-  const dataPesquisaLimiteColeta = marcoZero;
-  const dataPesquisaLancamento = subDays(marcoZero, input.prazoPesquisaConselheiros);
-  const dataPesquisaAvisoPrevio = subDays(dataPesquisaLancamento, 7);
+  const dataPesquisaLimiteColeta = marcoZero; // fim da coleta = Marco Zero
+  const dataPesquisaLancamento = subDays(marcoZero, input.prazoColetaPesquisa);
+  const dataPesquisaAvisoPrevio = subDays(dataPesquisaLancamento, input.prazoAvisoPrevio);
 
   const fmt = (d: Date) => format(d, 'yyyy-MM-dd');
 
