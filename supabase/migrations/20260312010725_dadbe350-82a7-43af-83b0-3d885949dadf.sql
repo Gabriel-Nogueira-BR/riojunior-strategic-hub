@@ -1,0 +1,1 @@
+ALTER TABLE public.presidencia_eventos ADD COLUMN data_referencia_status date NOT NULL DEFAULT '2026-01-07';
