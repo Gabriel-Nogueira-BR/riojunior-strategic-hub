@@ -6,11 +6,10 @@ import Modal from '@/components/ui/Modal';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { calcularCronograma, gerarTimeline, PresidenciaEventoInput } from '@/utils/backwardsScheduling';
+import { calcularCronograma, gerarTimeline, gerarGanttBars, PresidenciaEventoInput } from '@/utils/backwardsScheduling';
 import CronogramaPreview from './CronogramaPreview';
 import type { PresidenciaEvento } from '@/hooks/usePresidenciaEventos';
 
@@ -21,14 +20,14 @@ interface EventoFormModalProps {
   eventoEdit?: PresidenciaEvento | null;
 }
 
-const DIAS_SEMANA = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
-
 const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModalProps) => {
   const [nomeEvento, setNomeEvento] = useState(eventoEdit?.nomeEvento || '');
   const [dataEvento, setDataEvento] = useState<Date | undefined>(
     eventoEdit ? new Date(eventoEdit.dataEvento + 'T12:00:00') : undefined
   );
-  const [diaStatusSebrae, setDiaStatusSebrae] = useState(eventoEdit?.diaStatusSebrae || 'Quarta');
+  const [dataReferenciaStatus, setDataReferenciaStatus] = useState<Date | undefined>(
+    eventoEdit?.dataReferenciaStatus ? new Date(eventoEdit.dataReferenciaStatus + 'T12:00:00') : undefined
+  );
   const [prazoIdvBrainstorm, setPrazoIdvBrainstorm] = useState(eventoEdit?.prazoIdvBrainstorm || 14);
   const [prazoIdvTerceirizada, setPrazoIdvTerceirizada] = useState(eventoEdit?.prazoIdvTerceirizada || 21);
   const [prazoPfElaboracao, setPrazoPfElaboracao] = useState(eventoEdit?.prazoPfElaboracao || 14);
@@ -37,21 +36,22 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
   const [saving, setSaving] = useState(false);
 
   const input: PresidenciaEventoInput | null = useMemo(() => {
-    if (!dataEvento || !nomeEvento) return null;
+    if (!dataEvento || !nomeEvento || !dataReferenciaStatus) return null;
     return {
       nomeEvento,
       dataEvento: format(dataEvento, 'yyyy-MM-dd'),
-      diaStatusSebrae,
+      dataReferenciaStatus: format(dataReferenciaStatus, 'yyyy-MM-dd'),
       prazoIdvBrainstorm,
       prazoIdvTerceirizada,
       prazoPfElaboracao,
       prazoPfAprovacaoCa,
       prazoPesquisaConselheiros,
     };
-  }, [nomeEvento, dataEvento, diaStatusSebrae, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoPesquisaConselheiros]);
+  }, [nomeEvento, dataEvento, dataReferenciaStatus, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoPesquisaConselheiros]);
 
   const cronograma = useMemo(() => input ? calcularCronograma(input) : null, [input]);
   const timeline = useMemo(() => input && cronograma ? gerarTimeline(input, cronograma) : [], [input, cronograma]);
+  const ganttBars = useMemo(() => input && cronograma ? gerarGanttBars(input, cronograma) : [], [input, cronograma]);
 
   const handleSave = async () => {
     if (!input) return;
@@ -94,13 +94,21 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
               </Popover>
             </div>
             <div>
-              <Label>Dia Status SEBRAE</Label>
-              <Select value={diaStatusSebrae} onValueChange={setDiaStatusSebrae}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {DIAS_SEMANA.map(d => <SelectItem key={d} value={d}>{d}-feira</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <Label>Data Referência Status SEBRAE</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dataReferenciaStatus && "text-muted-foreground")}>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dataReferenciaStatus ? format(dataReferenciaStatus, "dd/MM/yyyy") : "Data âncora"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar mode="single" selected={dataReferenciaStatus} onSelect={setDataReferenciaStatus} initialFocus className="p-3 pointer-events-auto" />
+                </PopoverContent>
+              </Popover>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Recorrência quinzenal a partir desta data
+              </p>
             </div>
           </div>
         </div>
@@ -133,11 +141,11 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
           </div>
         </div>
 
-        {/* Preview do Cronograma */}
+        {/* Preview do Cronograma — Gantt */}
         {cronograma && input && (
           <div className="space-y-3">
-            <h3 className="font-semibold text-foreground text-sm border-b border-border pb-2">📋 Preview do Cronograma</h3>
-            <CronogramaPreview timeline={timeline} cronograma={cronograma} dataEvento={input.dataEvento} />
+            <h3 className="font-semibold text-foreground text-sm border-b border-border pb-2">📋 Preview do Cronograma (Fluxos Paralelos)</h3>
+            <CronogramaPreview timeline={timeline} cronograma={cronograma} dataEvento={input.dataEvento} ganttBars={ganttBars} />
           </div>
         )}
 

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, addMonths, subMonths, isSameMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, addMonths, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ const CalendarioEstrategicoTab = ({ eventos, loading }: CalendarioEstrategicoTab
       const input: PresidenciaEventoInput = {
         nomeEvento: ev.nomeEvento,
         dataEvento: ev.dataEvento,
-        diaStatusSebrae: ev.diaStatusSebrae,
+        dataReferenciaStatus: ev.dataReferenciaStatus,
         prazoIdvBrainstorm: ev.prazoIdvBrainstorm,
         prazoIdvTerceirizada: ev.prazoIdvTerceirizada,
         prazoPfElaboracao: ev.prazoPfElaboracao,
@@ -53,7 +53,6 @@ const CalendarioEstrategicoTab = ({ eventos, loading }: CalendarioEstrategicoTab
 
   return (
     <div className="space-y-4">
-      {/* Month navigation */}
       <div className="flex items-center justify-between">
         <Button variant="outline" size="sm" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
           <ChevronLeft size={16} />
@@ -66,7 +65,6 @@ const CalendarioEstrategicoTab = ({ eventos, loading }: CalendarioEstrategicoTab
         </Button>
       </div>
 
-      {/* Legend */}
       <div className="flex flex-wrap gap-3 text-xs">
         {[
           { cor: '#ef4444', label: 'Marco Zero' },
@@ -82,21 +80,17 @@ const CalendarioEstrategicoTab = ({ eventos, loading }: CalendarioEstrategicoTab
         ))}
       </div>
 
-      {/* Calendar Grid */}
       <Card>
         <CardContent className="p-3">
           <div className="grid grid-cols-7 gap-px">
-            {/* Weekday headers */}
             {WEEKDAYS.map(d => (
               <div key={d} className="p-2 text-center text-xs font-medium text-muted-foreground">{d}</div>
             ))}
 
-            {/* Empty cells before month start */}
             {Array.from({ length: startDayOfWeek }).map((_, i) => (
               <div key={`empty-${i}`} className="p-2 min-h-[80px]" />
             ))}
 
-            {/* Day cells */}
             {days.map(day => {
               const dayStr = format(day, 'yyyy-MM-dd');
               const dayMarcos = allMarcos.filter(m => m.data === dayStr);
@@ -114,8 +108,8 @@ const CalendarioEstrategicoTab = ({ eventos, loading }: CalendarioEstrategicoTab
                     {dayMarcos.map((m, i) => (
                       <div
                         key={i}
-                        className="text-[10px] px-1 py-0.5 rounded truncate text-white font-medium"
-                        style={{ backgroundColor: m.cor }}
+                        className="text-[10px] px-1 py-0.5 rounded truncate font-medium"
+                        style={{ backgroundColor: m.cor, color: '#fff' }}
                         title={`${m.label} - ${m.eventoNome}`}
                       >
                         {m.label.length > 12 ? m.label.substring(0, 12) + '…' : m.label}
