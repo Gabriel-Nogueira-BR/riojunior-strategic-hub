@@ -32,7 +32,8 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
   const [prazoIdvTerceirizada, setPrazoIdvTerceirizada] = useState(eventoEdit?.prazoIdvTerceirizada || 21);
   const [prazoPfElaboracao, setPrazoPfElaboracao] = useState(eventoEdit?.prazoPfElaboracao || 14);
   const [prazoPfAprovacaoCa, setPrazoPfAprovacaoCa] = useState(eventoEdit?.prazoPfAprovacaoCa || 7);
-  const [prazoPesquisaConselheiros, setPrazoPesquisaConselheiros] = useState(eventoEdit?.prazoPesquisaConselheiros || 14);
+  const [prazoAvisoPrevio, setPrazoAvisoPrevio] = useState(eventoEdit?.prazoAvisoPrevio || 7);
+  const [prazoColetaPesquisa, setPrazoColetaPesquisa] = useState(eventoEdit?.prazoColetaPesquisa || 14);
   const [saving, setSaving] = useState(false);
 
   const input: PresidenciaEventoInput | null = useMemo(() => {
