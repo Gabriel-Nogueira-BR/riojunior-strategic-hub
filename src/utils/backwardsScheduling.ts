@@ -8,7 +8,8 @@ export interface PresidenciaEventoInput {
   prazoIdvTerceirizada: number;
   prazoPfElaboracao: number;
   prazoPfAprovacaoCa: number;
-  prazoPesquisaConselheiros: number;
+  prazoAvisoPrevio: number;
+  prazoColetaPesquisa: number;
 }
 
 export interface CronogramaCalculado {
