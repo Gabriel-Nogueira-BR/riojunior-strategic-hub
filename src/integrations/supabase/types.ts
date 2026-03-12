@@ -500,6 +500,8 @@ export type Database = {
           id: string
           nome_evento: string
           periodicidade: string
+          prazo_aviso_previo: number
+          prazo_coleta_pesquisa: number
           prazo_idv_brainstorm: number
           prazo_idv_terceirizada: number
           prazo_pesquisa_conselheiros: number
@@ -524,6 +526,8 @@ export type Database = {
           id?: string
           nome_evento: string
           periodicidade?: string
+          prazo_aviso_previo?: number
+          prazo_coleta_pesquisa?: number
           prazo_idv_brainstorm?: number
           prazo_idv_terceirizada?: number
           prazo_pesquisa_conselheiros?: number
@@ -548,6 +552,8 @@ export type Database = {
           id?: string
           nome_evento?: string
           periodicidade?: string
+          prazo_aviso_previo?: number
+          prazo_coleta_pesquisa?: number
           prazo_idv_brainstorm?: number
           prazo_idv_terceirizada?: number
           prazo_pesquisa_conselheiros?: number

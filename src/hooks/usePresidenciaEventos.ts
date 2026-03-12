@@ -13,7 +13,8 @@ export interface PresidenciaEvento {
   prazoIdvTerceirizada: number;
   prazoPfElaboracao: number;
   prazoPfAprovacaoCa: number;
-  prazoPesquisaConselheiros: number;
+  prazoAvisoPrevio: number;
+  prazoColetaPesquisa: number;
   dataMarcoZero: string | null;
   dataIdvInicioBrainstorm: string | null;
   dataIdvInicioTerceirizada: string | null;
@@ -48,7 +49,8 @@ export function usePresidenciaEventos() {
         prazoIdvTerceirizada: e.prazo_idv_terceirizada,
         prazoPfElaboracao: e.prazo_pf_elaboracao,
         prazoPfAprovacaoCa: e.prazo_pf_aprovacao_ca,
-        prazoPesquisaConselheiros: e.prazo_pesquisa_conselheiros,
+        prazoAvisoPrevio: e.prazo_aviso_previo,
+        prazoColetaPesquisa: e.prazo_coleta_pesquisa,
         dataMarcoZero: e.data_marco_zero,
         dataIdvInicioBrainstorm: e.data_idv_inicio_brainstorm,
         dataIdvInicioTerceirizada: e.data_idv_inicio_terceirizada,
@@ -87,7 +89,8 @@ export function usePresidenciaEventos() {
           prazo_idv_terceirizada: input.prazoIdvTerceirizada,
           prazo_pf_elaboracao: input.prazoPfElaboracao,
           prazo_pf_aprovacao_ca: input.prazoPfAprovacaoCa,
-          prazo_pesquisa_conselheiros: input.prazoPesquisaConselheiros,
+          prazo_aviso_previo: input.prazoAvisoPrevio,
+          prazo_coleta_pesquisa: input.prazoColetaPesquisa,
           data_marco_zero: cronograma.dataMarcoZero,
           data_idv_inicio_brainstorm: cronograma.dataIdvInicioBrainstorm,
           data_idv_inicio_terceirizada: cronograma.dataIdvInicioTerceirizada,
@@ -122,7 +125,8 @@ export function usePresidenciaEventos() {
           prazo_idv_terceirizada: input.prazoIdvTerceirizada,
           prazo_pf_elaboracao: input.prazoPfElaboracao,
           prazo_pf_aprovacao_ca: input.prazoPfAprovacaoCa,
-          prazo_pesquisa_conselheiros: input.prazoPesquisaConselheiros,
+          prazo_aviso_previo: input.prazoAvisoPrevio,
+          prazo_coleta_pesquisa: input.prazoColetaPesquisa,
           data_marco_zero: cronograma.dataMarcoZero,
           data_idv_inicio_brainstorm: cronograma.dataIdvInicioBrainstorm,
           data_idv_inicio_terceirizada: cronograma.dataIdvInicioTerceirizada,

@@ -32,7 +32,8 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
   const [prazoIdvTerceirizada, setPrazoIdvTerceirizada] = useState(eventoEdit?.prazoIdvTerceirizada || 21);
   const [prazoPfElaboracao, setPrazoPfElaboracao] = useState(eventoEdit?.prazoPfElaboracao || 14);
   const [prazoPfAprovacaoCa, setPrazoPfAprovacaoCa] = useState(eventoEdit?.prazoPfAprovacaoCa || 7);
-  const [prazoPesquisaConselheiros, setPrazoPesquisaConselheiros] = useState(eventoEdit?.prazoPesquisaConselheiros || 14);
+  const [prazoAvisoPrevio, setPrazoAvisoPrevio] = useState(eventoEdit?.prazoAvisoPrevio || 7);
+  const [prazoColetaPesquisa, setPrazoColetaPesquisa] = useState(eventoEdit?.prazoColetaPesquisa || 14);
   const [saving, setSaving] = useState(false);
 
   const input: PresidenciaEventoInput | null = useMemo(() => {
@@ -45,9 +46,10 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
       prazoIdvTerceirizada,
       prazoPfElaboracao,
       prazoPfAprovacaoCa,
-      prazoPesquisaConselheiros,
+      prazoAvisoPrevio,
+      prazoColetaPesquisa,
     };
-  }, [nomeEvento, dataEvento, dataReferenciaStatus, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoPesquisaConselheiros]);
+  }, [nomeEvento, dataEvento, dataReferenciaStatus, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoAvisoPrevio, prazoColetaPesquisa]);
 
   const cronograma = useMemo(() => input ? calcularCronograma(input) : null, [input]);
   const timeline = useMemo(() => input && cronograma ? gerarTimeline(input, cronograma) : [], [input, cronograma]);
@@ -134,9 +136,15 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
               <Label className="text-xs">💰 Aprovação CA</Label>
               <Input type="number" min={1} value={prazoPfAprovacaoCa} onChange={(e) => setPrazoPfAprovacaoCa(Number(e.target.value))} />
             </div>
-            <div className="space-y-1 sm:col-span-2">
-              <Label className="text-xs">🤝 Pesquisa Conselheiros</Label>
-              <Input type="number" min={1} value={prazoPesquisaConselheiros} onChange={(e) => setPrazoPesquisaConselheiros(Number(e.target.value))} />
+            <div className="space-y-1">
+              <Label className="text-xs">🤝 Aviso Prévio</Label>
+              <Input type="number" min={1} value={prazoAvisoPrevio} onChange={(e) => setPrazoAvisoPrevio(Number(e.target.value))} />
+              <p className="text-[10px] text-muted-foreground">Dias antes do lançamento da pesquisa</p>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">🤝 Coleta da Pesquisa</Label>
+              <Input type="number" min={1} value={prazoColetaPesquisa} onChange={(e) => setPrazoColetaPesquisa(Number(e.target.value))} />
+              <p className="text-[10px] text-muted-foreground">Duração da pesquisa (fim = Marco Zero)</p>
             </div>
           </div>
         </div>
