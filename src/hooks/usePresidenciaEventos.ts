@@ -7,7 +7,7 @@ export interface PresidenciaEvento {
   id: string;
   nomeEvento: string;
   dataEvento: string;
-  diaStatusSebrae: string;
+  dataReferenciaStatus: string;
   periodicidade: string;
   prazoIdvBrainstorm: number;
   prazoIdvTerceirizada: number;
@@ -42,7 +42,7 @@ export function usePresidenciaEventos() {
         id: e.id,
         nomeEvento: e.nome_evento,
         dataEvento: e.data_evento,
-        diaStatusSebrae: e.dia_status_sebrae,
+        dataReferenciaStatus: e.data_referencia_status,
         periodicidade: e.periodicidade,
         prazoIdvBrainstorm: e.prazo_idv_brainstorm,
         prazoIdvTerceirizada: e.prazo_idv_terceirizada,
@@ -82,7 +82,7 @@ export function usePresidenciaEventos() {
         .insert({
           nome_evento: input.nomeEvento,
           data_evento: input.dataEvento,
-          dia_status_sebrae: input.diaStatusSebrae,
+          data_referencia_status: input.dataReferenciaStatus,
           prazo_idv_brainstorm: input.prazoIdvBrainstorm,
           prazo_idv_terceirizada: input.prazoIdvTerceirizada,
           prazo_pf_elaboracao: input.prazoPfElaboracao,
@@ -117,7 +117,7 @@ export function usePresidenciaEventos() {
         .update({
           nome_evento: input.nomeEvento,
           data_evento: input.dataEvento,
-          dia_status_sebrae: input.diaStatusSebrae,
+          data_referencia_status: input.dataReferenciaStatus,
           prazo_idv_brainstorm: input.prazoIdvBrainstorm,
           prazo_idv_terceirizada: input.prazoIdvTerceirizada,
           prazo_pf_elaboracao: input.prazoPfElaboracao,

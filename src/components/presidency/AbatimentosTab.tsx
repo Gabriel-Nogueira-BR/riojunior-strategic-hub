@@ -9,7 +9,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal';
 import EventoFormModal from './EventoFormModal';
 import CronogramaPreview from './CronogramaPreview';
 import { PresidenciaEvento } from '@/hooks/usePresidenciaEventos';
-import { PresidenciaEventoInput, calcularCronograma, gerarTimeline } from '@/utils/backwardsScheduling';
+import { PresidenciaEventoInput, calcularCronograma, gerarTimeline, gerarGanttBars } from '@/utils/backwardsScheduling';
 
 interface AbatimentosTabProps {
   eventos: PresidenciaEvento[];
@@ -66,7 +66,7 @@ const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEv
             const input: PresidenciaEventoInput = {
               nomeEvento: ev.nomeEvento,
               dataEvento: ev.dataEvento,
-              diaStatusSebrae: ev.diaStatusSebrae,
+              dataReferenciaStatus: ev.dataReferenciaStatus,
               prazoIdvBrainstorm: ev.prazoIdvBrainstorm,
               prazoIdvTerceirizada: ev.prazoIdvTerceirizada,
               prazoPfElaboracao: ev.prazoPfElaboracao,
@@ -75,8 +75,8 @@ const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEv
             };
             const cronograma = calcularCronograma(input);
             const timeline = gerarTimeline(input, cronograma);
+            const ganttBars = gerarGanttBars(input, cronograma);
 
-            // Find next upcoming deadline
             const nextDeadline = timeline.find(m => isBefore(today, new Date(m.data + 'T12:00:00')));
 
             return (
@@ -124,7 +124,7 @@ const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEv
 
                   {isExpanded && (
                     <div className="mt-3">
-                      <CronogramaPreview timeline={timeline} cronograma={cronograma} dataEvento={ev.dataEvento} />
+                      <CronogramaPreview timeline={timeline} cronograma={cronograma} dataEvento={ev.dataEvento} ganttBars={ganttBars} />
                     </div>
                   )}
                 </CardContent>

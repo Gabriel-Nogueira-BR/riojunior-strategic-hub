@@ -495,6 +495,7 @@ export type Database = {
           data_pesquisa_limite_coleta: string | null
           data_pf_aprovacao_ca: string | null
           data_pf_inicio_elaboracao: string | null
+          data_referencia_status: string
           dia_status_sebrae: string
           id: string
           nome_evento: string
@@ -518,6 +519,7 @@ export type Database = {
           data_pesquisa_limite_coleta?: string | null
           data_pf_aprovacao_ca?: string | null
           data_pf_inicio_elaboracao?: string | null
+          data_referencia_status?: string
           dia_status_sebrae?: string
           id?: string
           nome_evento: string
@@ -541,6 +543,7 @@ export type Database = {
           data_pesquisa_limite_coleta?: string | null
           data_pf_aprovacao_ca?: string | null
           data_pf_inicio_elaboracao?: string | null
+          data_referencia_status?: string
           dia_status_sebrae?: string
           id?: string
           nome_evento?: string

@@ -1,19 +1,9 @@
-import { addDays, subDays, getDay, isBefore, isEqual, format } from 'date-fns';
-
-const DIAS_SEMANA_MAP: Record<string, number> = {
-  'Domingo': 0,
-  'Segunda': 1,
-  'Terça': 2,
-  'Quarta': 3,
-  'Quinta': 4,
-  'Sexta': 5,
-  'Sábado': 6,
-};
+import { addDays, subDays, isBefore, isEqual, format, differenceInDays } from 'date-fns';
 
 export interface PresidenciaEventoInput {
   nomeEvento: string;
   dataEvento: string; // YYYY-MM-DD
-  diaStatusSebrae: string;
+  dataReferenciaStatus: string; // YYYY-MM-DD — anchor date for biweekly recurrence
   prazoIdvBrainstorm: number;
   prazoIdvTerceirizada: number;
   prazoPfElaboracao: number;
@@ -33,27 +23,35 @@ export interface CronogramaCalculado {
 }
 
 /**
- * Calcula o Marco Zero: a reunião quinzenal de Status SEBRAE
- * que ocorra pelo menos 45 dias antes da data do evento.
- * A recorrência quinzenal é baseada no dia da semana configurado.
+ * Calcula o Marco Zero usando data âncora + recorrência quinzenal.
+ * Encontra a data da recorrência que cai exatamente ou imediatamente
+ * antes do limite de 45 dias de antecedência do evento.
  */
-function calcularMarcoZero(dataEvento: Date, diaStatusSebrae: string): Date {
-  const diaSemanaAlvo = DIAS_SEMANA_MAP[diaStatusSebrae] ?? 3; // default Quarta
+function calcularMarcoZero(dataEvento: Date, dataReferenciaStatus: Date): Date {
   const limite = subDays(dataEvento, 45);
 
-  // Encontrar a data do dia da semana alvo que cai em ou antes do limite
-  let candidata = new Date(limite);
-  const diaCandidata = getDay(candidata);
-  
-  // Ajustar para o dia da semana alvo mais próximo (para trás)
-  let diff = diaCandidata - diaSemanaAlvo;
-  if (diff < 0) diff += 7;
-  candidata = subDays(candidata, diff);
+  // Generate biweekly occurrences from anchor, going forward far enough
+  // then pick the one on or immediately before `limite`
+  const anchorTime = dataReferenciaStatus.getTime();
+  const limiteTime = limite.getTime();
+  const intervaloMs = 14 * 24 * 60 * 60 * 1000;
 
-  // Garantir quinzenalidade - voltar de 14 em 14 dias se necessário para alinhar
-  // O marco zero é a reunião quinzenal mais próxima que ainda respeite os 45 dias
-  if (isBefore(dataEvento, addDays(candidata, 45)) && !isEqual(addDays(candidata, 45), dataEvento)) {
-    candidata = subDays(candidata, 14);
+  // Calculate how many intervals from anchor to get near limite
+  const diffMs = limiteTime - anchorTime;
+  let n = Math.floor(diffMs / intervaloMs);
+
+  // Candidate = anchor + n * 14 days
+  let candidata = addDays(dataReferenciaStatus, n * 14);
+
+  // Adjust: ensure candidata <= limite
+  while (candidata.getTime() > limiteTime) {
+    n--;
+    candidata = addDays(dataReferenciaStatus, n * 14);
+  }
+  // Also try n+1 in case it's exactly on limite
+  const next = addDays(dataReferenciaStatus, (n + 1) * 14);
+  if (next.getTime() <= limiteTime) {
+    candidata = next;
   }
 
   return candidata;
@@ -61,19 +59,20 @@ function calcularMarcoZero(dataEvento: Date, diaStatusSebrae: string): Date {
 
 export function calcularCronograma(input: PresidenciaEventoInput): CronogramaCalculado {
   const dataEvento = new Date(input.dataEvento + 'T12:00:00');
-  
-  // Marco Zero
-  const marcoZero = calcularMarcoZero(dataEvento, input.diaStatusSebrae);
+  const dataRef = new Date(input.dataReferenciaStatus + 'T12:00:00');
 
-  // Fluxo IDV (backwards from Marco Zero)
+  // Marco Zero
+  const marcoZero = calcularMarcoZero(dataEvento, dataRef);
+
+  // Fluxo IDV — independente, prazo final = Marco Zero
   const dataIdvInicioTerceirizada = subDays(marcoZero, input.prazoIdvTerceirizada);
   const dataIdvInicioBrainstorm = subDays(dataIdvInicioTerceirizada, input.prazoIdvBrainstorm);
 
-  // Fluxo Financeiro (backwards from Marco Zero)
-  const dataPfAprovacaoCa = marcoZero; // deadline = Marco Zero
+  // Fluxo Financeiro — independente, prazo final = Marco Zero
+  const dataPfAprovacaoCa = subDays(marcoZero, 0); // deadline = Marco Zero
   const dataPfInicioElaboracao = subDays(marcoZero, input.prazoPfAprovacaoCa + input.prazoPfElaboracao);
 
-  // Articulação com Conselheiros (backwards from Marco Zero)
+  // Fluxo Articulação — independente, prazo final = Marco Zero
   const dataPesquisaLimiteColeta = marcoZero;
   const dataPesquisaLancamento = subDays(marcoZero, input.prazoPesquisaConselheiros);
   const dataPesquisaAvisoPrevio = subDays(dataPesquisaLancamento, 7);
@@ -111,4 +110,52 @@ export function gerarTimeline(input: PresidenciaEventoInput, cronograma: Cronogr
   ];
 
   return marcos.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+}
+
+/** Gantt bar data for parallel flow visualization */
+export interface GanttBar {
+  fluxo: string;
+  label: string;
+  cor: string;
+  inicio: string;
+  fim: string;
+  etapas: { label: string; inicio: string; fim: string }[];
+}
+
+export function gerarGanttBars(input: PresidenciaEventoInput, cronograma: CronogramaCalculado): GanttBar[] {
+  return [
+    {
+      fluxo: 'idv',
+      label: '🎨 Identidade Visual',
+      cor: '#f59e0b',
+      inicio: cronograma.dataIdvInicioBrainstorm,
+      fim: cronograma.dataMarcoZero,
+      etapas: [
+        { label: 'Brainstorm', inicio: cronograma.dataIdvInicioBrainstorm, fim: cronograma.dataIdvInicioTerceirizada },
+        { label: 'Terceirizada', inicio: cronograma.dataIdvInicioTerceirizada, fim: cronograma.dataMarcoZero },
+      ],
+    },
+    {
+      fluxo: 'financeiro',
+      label: '💰 Financeiro (PF)',
+      cor: '#10b981',
+      inicio: cronograma.dataPfInicioElaboracao,
+      fim: cronograma.dataMarcoZero,
+      etapas: [
+        { label: 'Elaboração', inicio: cronograma.dataPfInicioElaboracao, fim: cronograma.dataPfAprovacaoCa },
+        { label: 'Aprovação CA', inicio: cronograma.dataPfAprovacaoCa, fim: cronograma.dataMarcoZero },
+      ],
+    },
+    {
+      fluxo: 'articulacao',
+      label: '🤝 Articulação',
+      cor: '#a855f7',
+      inicio: cronograma.dataPesquisaAvisoPrevio,
+      fim: cronograma.dataMarcoZero,
+      etapas: [
+        { label: 'Aviso Prévio', inicio: cronograma.dataPesquisaAvisoPrevio, fim: cronograma.dataPesquisaLancamento },
+        { label: 'Pesquisa Conselheiros', inicio: cronograma.dataPesquisaLancamento, fim: cronograma.dataPesquisaLimiteColeta },
+      ],
+    },
+  ];
 }
