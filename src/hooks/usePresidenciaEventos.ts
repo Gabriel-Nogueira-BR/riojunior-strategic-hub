@@ -13,7 +13,8 @@ export interface PresidenciaEvento {
   prazoIdvTerceirizada: number;
   prazoPfElaboracao: number;
   prazoPfAprovacaoCa: number;
-  prazoPesquisaConselheiros: number;
+  prazoAvisoPrevio: number;
+  prazoColetaPesquisa: number;
   dataMarcoZero: string | null;
   dataIdvInicioBrainstorm: string | null;
   dataIdvInicioTerceirizada: string | null;
