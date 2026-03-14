@@ -15,6 +15,8 @@ export interface PresidenciaEvento {
   prazoPfAprovacaoCa: number;
   prazoAvisoPrevio: number;
   prazoColetaPesquisa: number;
+  prazoAberturaCoordenadoria: number;
+  prazoArticulacaoLocal: number;
   dataMarcoZero: string | null;
   dataIdvInicioBrainstorm: string | null;
   dataIdvInicioTerceirizada: string | null;
@@ -23,6 +25,8 @@ export interface PresidenciaEvento {
   dataPesquisaLancamento: string | null;
   dataPesquisaAvisoPrevio: string | null;
   dataPesquisaLimiteColeta: string | null;
+  dataAberturaCoordenadoria: string | null;
+  dataArticulacaoLocal: string | null;
   status: string;
 }
 

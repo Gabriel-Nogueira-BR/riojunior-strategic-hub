@@ -34,6 +34,8 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
   const [prazoPfAprovacaoCa, setPrazoPfAprovacaoCa] = useState(eventoEdit?.prazoPfAprovacaoCa || 7);
   const [prazoAvisoPrevio, setPrazoAvisoPrevio] = useState(eventoEdit?.prazoAvisoPrevio || 7);
   const [prazoColetaPesquisa, setPrazoColetaPesquisa] = useState(eventoEdit?.prazoColetaPesquisa || 14);
+  const [prazoAberturaCoordenadoria, setPrazoAberturaCoordenadoria] = useState(eventoEdit?.prazoAberturaCoordenadoria || 7);
+  const [prazoArticulacaoLocal, setPrazoArticulacaoLocal] = useState(eventoEdit?.prazoArticulacaoLocal || 7);
   const [saving, setSaving] = useState(false);
 
   const input: PresidenciaEventoInput | null = useMemo(() => {
@@ -48,8 +50,10 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
       prazoPfAprovacaoCa,
       prazoAvisoPrevio,
       prazoColetaPesquisa,
+      prazoAberturaCoordenadoria,
+      prazoArticulacaoLocal,
     };
-  }, [nomeEvento, dataEvento, dataReferenciaStatus, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoAvisoPrevio, prazoColetaPesquisa]);
+  }, [nomeEvento, dataEvento, dataReferenciaStatus, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoAvisoPrevio, prazoColetaPesquisa, prazoAberturaCoordenadoria, prazoArticulacaoLocal]);
 
   const cronograma = useMemo(() => input ? calcularCronograma(input) : null, [input]);
   const timeline = useMemo(() => input && cronograma ? gerarTimeline(input, cronograma) : [], [input, cronograma]);
@@ -119,6 +123,23 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
         <div className="space-y-3">
           <h3 className="font-semibold text-foreground text-sm border-b border-border pb-2">Prazos (em dias)</h3>
           
+          {/* Coordenadoria & Infraestrutura */}
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-muted-foreground">📋 Pré-Planejamento (impacta o projeto como um todo)</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-xs">📋 Abertura Coordenadoria</Label>
+                <Input type="number" min={1} value={prazoAberturaCoordenadoria} onChange={(e) => setPrazoAberturaCoordenadoria(Number(e.target.value))} />
+                <p className="text-[10px] text-muted-foreground">Dias antes do início do fluxo mais antigo</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">🏗️ Articulação de Local</Label>
+                <Input type="number" min={1} value={prazoArticulacaoLocal} onChange={(e) => setPrazoArticulacaoLocal(Number(e.target.value))} />
+                <p className="text-[10px] text-muted-foreground">Dias antes da Elaboração do PF (impacta Financeiro)</p>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-xs">🎨 Brainstorm IDV</Label>
