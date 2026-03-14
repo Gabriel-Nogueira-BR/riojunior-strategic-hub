@@ -7,16 +7,15 @@ export interface PresidenciaEvento {
   id: string;
   nomeEvento: string;
   dataEvento: string;
-  dataReferenciaStatus: string;
   periodicidade: string;
-  prazoIdvBrainstorm: number;
-  prazoIdvTerceirizada: number;
-  prazoPfElaboracao: number;
-  prazoPfAprovacaoCa: number;
-  prazoAvisoPrevio: number;
-  prazoColetaPesquisa: number;
-  prazoAberturaCoordenadoria: number;
-  prazoArticulacaoLocal: number;
+  prazoIdvBrainstorm: number | null;
+  prazoIdvTerceirizada: number | null;
+  prazoPfElaboracao: number | null;
+  prazoPfAprovacaoCa: number | null;
+  prazoAvisoPrevio: number | null;
+  prazoColetaPesquisa: number | null;
+  prazoAberturaCoordenadoria: number | null;
+  prazoArticulacaoLocal: number | null;
   dataMarcoZero: string | null;
   dataIdvInicioBrainstorm: string | null;
   dataIdvInicioTerceirizada: string | null;
@@ -47,7 +46,6 @@ export function usePresidenciaEventos() {
         id: e.id,
         nomeEvento: e.nome_evento,
         dataEvento: e.data_evento,
-        dataReferenciaStatus: e.data_referencia_status,
         periodicidade: e.periodicidade,
         prazoIdvBrainstorm: e.prazo_idv_brainstorm,
         prazoIdvTerceirizada: e.prazo_idv_terceirizada,
@@ -92,7 +90,6 @@ export function usePresidenciaEventos() {
         .insert({
           nome_evento: input.nomeEvento,
           data_evento: input.dataEvento,
-          data_referencia_status: input.dataReferenciaStatus,
           prazo_idv_brainstorm: input.prazoIdvBrainstorm,
           prazo_idv_terceirizada: input.prazoIdvTerceirizada,
           prazo_pf_elaboracao: input.prazoPfElaboracao,
@@ -132,7 +129,6 @@ export function usePresidenciaEventos() {
         .update({
           nome_evento: input.nomeEvento,
           data_evento: input.dataEvento,
-          data_referencia_status: input.dataReferenciaStatus,
           prazo_idv_brainstorm: input.prazoIdvBrainstorm,
           prazo_idv_terceirizada: input.prazoIdvTerceirizada,
           prazo_pf_elaboracao: input.prazoPfElaboracao,

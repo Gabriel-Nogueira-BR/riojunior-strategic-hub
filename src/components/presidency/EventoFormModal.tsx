@@ -18,24 +18,31 @@ interface EventoFormModalProps {
   onClose: () => void;
   onSave: (input: PresidenciaEventoInput) => Promise<void>;
   eventoEdit?: PresidenciaEvento | null;
+  dataReferenciaStatus: string;
 }
 
-const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModalProps) => {
+// Helper: convert number|null to string for input display
+const numToStr = (v: number | null | undefined): string => (v != null ? String(v) : '');
+// Helper: convert input string to number|null
+const strToNum = (v: string): number | null => {
+  if (v === '') return null;
+  const n = Number(v);
+  return isNaN(n) ? null : n;
+};
+
+const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit, dataReferenciaStatus }: EventoFormModalProps) => {
   const [nomeEvento, setNomeEvento] = useState(eventoEdit?.nomeEvento || '');
   const [dataEvento, setDataEvento] = useState<Date | undefined>(
     eventoEdit ? new Date(eventoEdit.dataEvento + 'T12:00:00') : undefined
   );
-  const [dataReferenciaStatus, setDataReferenciaStatus] = useState<Date | undefined>(
-    eventoEdit?.dataReferenciaStatus ? new Date(eventoEdit.dataReferenciaStatus + 'T12:00:00') : undefined
-  );
-  const [prazoIdvBrainstorm, setPrazoIdvBrainstorm] = useState(eventoEdit?.prazoIdvBrainstorm || 14);
-  const [prazoIdvTerceirizada, setPrazoIdvTerceirizada] = useState(eventoEdit?.prazoIdvTerceirizada || 21);
-  const [prazoPfElaboracao, setPrazoPfElaboracao] = useState(eventoEdit?.prazoPfElaboracao || 14);
-  const [prazoPfAprovacaoCa, setPrazoPfAprovacaoCa] = useState(eventoEdit?.prazoPfAprovacaoCa || 7);
-  const [prazoAvisoPrevio, setPrazoAvisoPrevio] = useState(eventoEdit?.prazoAvisoPrevio || 7);
-  const [prazoColetaPesquisa, setPrazoColetaPesquisa] = useState(eventoEdit?.prazoColetaPesquisa || 14);
-  const [prazoAberturaCoordenadoria, setPrazoAberturaCoordenadoria] = useState(eventoEdit?.prazoAberturaCoordenadoria || 7);
-  const [prazoArticulacaoLocal, setPrazoArticulacaoLocal] = useState(eventoEdit?.prazoArticulacaoLocal || 7);
+  const [prazoIdvBrainstorm, setPrazoIdvBrainstorm] = useState(numToStr(eventoEdit?.prazoIdvBrainstorm));
+  const [prazoIdvTerceirizada, setPrazoIdvTerceirizada] = useState(numToStr(eventoEdit?.prazoIdvTerceirizada));
+  const [prazoPfElaboracao, setPrazoPfElaboracao] = useState(numToStr(eventoEdit?.prazoPfElaboracao));
+  const [prazoPfAprovacaoCa, setPrazoPfAprovacaoCa] = useState(numToStr(eventoEdit?.prazoPfAprovacaoCa));
+  const [prazoAvisoPrevio, setPrazoAvisoPrevio] = useState(numToStr(eventoEdit?.prazoAvisoPrevio));
+  const [prazoColetaPesquisa, setPrazoColetaPesquisa] = useState(numToStr(eventoEdit?.prazoColetaPesquisa));
+  const [prazoAberturaCoordenadoria, setPrazoAberturaCoordenadoria] = useState(numToStr(eventoEdit?.prazoAberturaCoordenadoria));
+  const [prazoArticulacaoLocal, setPrazoArticulacaoLocal] = useState(numToStr(eventoEdit?.prazoArticulacaoLocal));
   const [saving, setSaving] = useState(false);
 
   const input: PresidenciaEventoInput | null = useMemo(() => {
@@ -43,15 +50,15 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
     return {
       nomeEvento,
       dataEvento: format(dataEvento, 'yyyy-MM-dd'),
-      dataReferenciaStatus: format(dataReferenciaStatus, 'yyyy-MM-dd'),
-      prazoIdvBrainstorm,
-      prazoIdvTerceirizada,
-      prazoPfElaboracao,
-      prazoPfAprovacaoCa,
-      prazoAvisoPrevio,
-      prazoColetaPesquisa,
-      prazoAberturaCoordenadoria,
-      prazoArticulacaoLocal,
+      dataReferenciaStatus,
+      prazoIdvBrainstorm: strToNum(prazoIdvBrainstorm),
+      prazoIdvTerceirizada: strToNum(prazoIdvTerceirizada),
+      prazoPfElaboracao: strToNum(prazoPfElaboracao),
+      prazoPfAprovacaoCa: strToNum(prazoPfAprovacaoCa),
+      prazoAvisoPrevio: strToNum(prazoAvisoPrevio),
+      prazoColetaPesquisa: strToNum(prazoColetaPesquisa),
+      prazoAberturaCoordenadoria: strToNum(prazoAberturaCoordenadoria),
+      prazoArticulacaoLocal: strToNum(prazoArticulacaoLocal),
     };
   }, [nomeEvento, dataEvento, dataReferenciaStatus, prazoIdvBrainstorm, prazoIdvTerceirizada, prazoPfElaboracao, prazoPfAprovacaoCa, prazoAvisoPrevio, prazoColetaPesquisa, prazoAberturaCoordenadoria, prazoArticulacaoLocal]);
 
@@ -84,58 +91,39 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
             <Input value={nomeEvento} onChange={(e) => setNomeEvento(e.target.value)} placeholder="Ex: Encontro Regional Sul" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label>Data do Evento</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dataEvento && "text-muted-foreground")}>
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dataEvento ? format(dataEvento, "dd/MM/yyyy") : "Selecionar data"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={dataEvento} onSelect={setDataEvento} initialFocus className="p-3 pointer-events-auto" />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div>
-              <Label>Data Referência Status SEBRAE</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dataReferenciaStatus && "text-muted-foreground")}>
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dataReferenciaStatus ? format(dataReferenciaStatus, "dd/MM/yyyy") : "Data âncora"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={dataReferenciaStatus} onSelect={setDataReferenciaStatus} initialFocus className="p-3 pointer-events-auto" />
-                </PopoverContent>
-              </Popover>
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Recorrência quinzenal a partir desta data
-              </p>
-            </div>
+          <div>
+            <Label>Data do Evento</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dataEvento && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dataEvento ? format(dataEvento, "dd/MM/yyyy") : "Selecionar data"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={dataEvento} onSelect={setDataEvento} initialFocus className="p-3 pointer-events-auto" />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 
         {/* Prazos */}
         <div className="space-y-3">
-          <h3 className="font-semibold text-foreground text-sm border-b border-border pb-2">Prazos (em dias)</h3>
+          <h3 className="font-semibold text-foreground text-sm border-b border-border pb-2">Prazos (em dias) — deixe vazio para não incluir no cronograma</h3>
           
           {/* Coordenadoria & Infraestrutura */}
           <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">📋 Pré-Planejamento (impacta o projeto como um todo)</p>
+            <p className="text-xs font-medium text-muted-foreground">📋 Pré-Planejamento</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label className="text-xs">📋 Abertura Coordenadoria</Label>
-                <Input type="number" min={1} value={prazoAberturaCoordenadoria} onChange={(e) => setPrazoAberturaCoordenadoria(Number(e.target.value))} />
+                <Input type="number" min={1} value={prazoAberturaCoordenadoria} onChange={(e) => setPrazoAberturaCoordenadoria(e.target.value)} placeholder="—" />
                 <p className="text-[10px] text-muted-foreground">Dias antes do início do fluxo mais antigo</p>
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">🏗️ Articulação de Local</Label>
-                <Input type="number" min={1} value={prazoArticulacaoLocal} onChange={(e) => setPrazoArticulacaoLocal(Number(e.target.value))} />
-                <p className="text-[10px] text-muted-foreground">Dias antes da Elaboração do PF (impacta Financeiro)</p>
+                <Input type="number" min={1} value={prazoArticulacaoLocal} onChange={(e) => setPrazoArticulacaoLocal(e.target.value)} placeholder="—" />
+                <p className="text-[10px] text-muted-foreground">Dias antes da Elaboração do PF</p>
               </div>
             </div>
           </div>
@@ -143,28 +131,28 @@ const EventoFormModal = ({ isOpen, onClose, onSave, eventoEdit }: EventoFormModa
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-xs">🎨 Brainstorm IDV</Label>
-              <Input type="number" min={1} value={prazoIdvBrainstorm} onChange={(e) => setPrazoIdvBrainstorm(Number(e.target.value))} />
+              <Input type="number" min={1} value={prazoIdvBrainstorm} onChange={(e) => setPrazoIdvBrainstorm(e.target.value)} placeholder="—" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">🎨 Terceirizada IDV</Label>
-              <Input type="number" min={1} value={prazoIdvTerceirizada} onChange={(e) => setPrazoIdvTerceirizada(Number(e.target.value))} />
+              <Input type="number" min={1} value={prazoIdvTerceirizada} onChange={(e) => setPrazoIdvTerceirizada(e.target.value)} placeholder="—" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">💰 Elaboração PF</Label>
-              <Input type="number" min={1} value={prazoPfElaboracao} onChange={(e) => setPrazoPfElaboracao(Number(e.target.value))} />
+              <Input type="number" min={1} value={prazoPfElaboracao} onChange={(e) => setPrazoPfElaboracao(e.target.value)} placeholder="—" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">💰 Aprovação CA</Label>
-              <Input type="number" min={1} value={prazoPfAprovacaoCa} onChange={(e) => setPrazoPfAprovacaoCa(Number(e.target.value))} />
+              <Input type="number" min={1} value={prazoPfAprovacaoCa} onChange={(e) => setPrazoPfAprovacaoCa(e.target.value)} placeholder="—" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">🤝 Aviso Prévio</Label>
-              <Input type="number" min={1} value={prazoAvisoPrevio} onChange={(e) => setPrazoAvisoPrevio(Number(e.target.value))} />
+              <Input type="number" min={1} value={prazoAvisoPrevio} onChange={(e) => setPrazoAvisoPrevio(e.target.value)} placeholder="—" />
               <p className="text-[10px] text-muted-foreground">Dias antes do lançamento da pesquisa</p>
             </div>
             <div className="space-y-1">
               <Label className="text-xs">🤝 Coleta da Pesquisa</Label>
-              <Input type="number" min={1} value={prazoColetaPesquisa} onChange={(e) => setPrazoColetaPesquisa(Number(e.target.value))} />
+              <Input type="number" min={1} value={prazoColetaPesquisa} onChange={(e) => setPrazoColetaPesquisa(e.target.value)} placeholder="—" />
               <p className="text-[10px] text-muted-foreground">Duração da pesquisa (fim = Marco Zero)</p>
             </div>
           </div>
