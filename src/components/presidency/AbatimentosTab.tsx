@@ -73,6 +73,8 @@ const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEv
               prazoPfAprovacaoCa: ev.prazoPfAprovacaoCa,
               prazoAvisoPrevio: ev.prazoAvisoPrevio,
               prazoColetaPesquisa: ev.prazoColetaPesquisa,
+              prazoAberturaCoordenadoria: ev.prazoAberturaCoordenadoria,
+              prazoArticulacaoLocal: ev.prazoArticulacaoLocal,
             };
             const cronograma = calcularCronograma(input);
             const timeline = gerarTimeline(input, cronograma);

@@ -55,6 +55,8 @@ export function usePresidenciaEventos() {
         prazoPfAprovacaoCa: e.prazo_pf_aprovacao_ca,
         prazoAvisoPrevio: e.prazo_aviso_previo,
         prazoColetaPesquisa: e.prazo_coleta_pesquisa,
+        prazoAberturaCoordenadoria: e.prazo_abertura_coordenadoria,
+        prazoArticulacaoLocal: e.prazo_articulacao_local,
         dataMarcoZero: e.data_marco_zero,
         dataIdvInicioBrainstorm: e.data_idv_inicio_brainstorm,
         dataIdvInicioTerceirizada: e.data_idv_inicio_terceirizada,
@@ -63,6 +65,8 @@ export function usePresidenciaEventos() {
         dataPesquisaLancamento: e.data_pesquisa_lancamento,
         dataPesquisaAvisoPrevio: e.data_pesquisa_aviso_previo,
         dataPesquisaLimiteColeta: e.data_pesquisa_limite_coleta,
+        dataAberturaCoordenadoria: e.data_abertura_coordenadoria,
+        dataArticulacaoLocal: e.data_articulacao_local,
         status: e.status,
       }));
 
