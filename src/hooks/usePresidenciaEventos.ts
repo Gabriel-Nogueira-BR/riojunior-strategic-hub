@@ -111,6 +111,7 @@ export function usePresidenciaEventos() {
           data_pesquisa_limite_coleta: cronograma.dataPesquisaLimiteColeta,
           data_abertura_coordenadoria: cronograma.dataAberturaCoordenadoria,
           data_articulacao_local: cronograma.dataArticulacaoLocal,
+        } as any);
 
       if (error) throw error;
       await fetchEventos();
