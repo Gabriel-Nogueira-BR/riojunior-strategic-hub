@@ -138,6 +138,8 @@ export function usePresidenciaEventos() {
           prazo_pf_aprovacao_ca: input.prazoPfAprovacaoCa,
           prazo_aviso_previo: input.prazoAvisoPrevio,
           prazo_coleta_pesquisa: input.prazoColetaPesquisa,
+          prazo_abertura_coordenadoria: input.prazoAberturaCoordenadoria,
+          prazo_articulacao_local: input.prazoArticulacaoLocal,
           data_marco_zero: cronograma.dataMarcoZero,
           data_idv_inicio_brainstorm: cronograma.dataIdvInicioBrainstorm,
           data_idv_inicio_terceirizada: cronograma.dataIdvInicioTerceirizada,
@@ -146,6 +148,8 @@ export function usePresidenciaEventos() {
           data_pesquisa_lancamento: cronograma.dataPesquisaLancamento,
           data_pesquisa_aviso_previo: cronograma.dataPesquisaAvisoPrevio,
           data_pesquisa_limite_coleta: cronograma.dataPesquisaLimiteColeta,
+          data_abertura_coordenadoria: cronograma.dataAberturaCoordenadoria,
+          data_articulacao_local: cronograma.dataArticulacaoLocal,
         } as any)
         .eq('id', id);
 
