@@ -97,6 +97,27 @@ export type Database = {
         }
         Relationships: []
       }
+      configuracoes_presidencia: {
+        Row: {
+          created_at: string
+          data_referencia_status: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_referencia_status?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_referencia_status?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contratos: {
         Row: {
           ano: number
@@ -497,20 +518,19 @@ export type Database = {
           data_pesquisa_limite_coleta: string | null
           data_pf_aprovacao_ca: string | null
           data_pf_inicio_elaboracao: string | null
-          data_referencia_status: string
           dia_status_sebrae: string
           id: string
           nome_evento: string
           periodicidade: string
-          prazo_abertura_coordenadoria: number
-          prazo_articulacao_local: number
+          prazo_abertura_coordenadoria: number | null
+          prazo_articulacao_local: number | null
           prazo_aviso_previo: number
           prazo_coleta_pesquisa: number
-          prazo_idv_brainstorm: number
-          prazo_idv_terceirizada: number
+          prazo_idv_brainstorm: number | null
+          prazo_idv_terceirizada: number | null
           prazo_pesquisa_conselheiros: number
-          prazo_pf_aprovacao_ca: number
-          prazo_pf_elaboracao: number
+          prazo_pf_aprovacao_ca: number | null
+          prazo_pf_elaboracao: number | null
           status: string
           updated_at: string
         }
@@ -527,20 +547,19 @@ export type Database = {
           data_pesquisa_limite_coleta?: string | null
           data_pf_aprovacao_ca?: string | null
           data_pf_inicio_elaboracao?: string | null
-          data_referencia_status?: string
           dia_status_sebrae?: string
           id?: string
           nome_evento: string
           periodicidade?: string
-          prazo_abertura_coordenadoria?: number
-          prazo_articulacao_local?: number
+          prazo_abertura_coordenadoria?: number | null
+          prazo_articulacao_local?: number | null
           prazo_aviso_previo?: number
           prazo_coleta_pesquisa?: number
-          prazo_idv_brainstorm?: number
-          prazo_idv_terceirizada?: number
+          prazo_idv_brainstorm?: number | null
+          prazo_idv_terceirizada?: number | null
           prazo_pesquisa_conselheiros?: number
-          prazo_pf_aprovacao_ca?: number
-          prazo_pf_elaboracao?: number
+          prazo_pf_aprovacao_ca?: number | null
+          prazo_pf_elaboracao?: number | null
           status?: string
           updated_at?: string
         }
@@ -557,20 +576,19 @@ export type Database = {
           data_pesquisa_limite_coleta?: string | null
           data_pf_aprovacao_ca?: string | null
           data_pf_inicio_elaboracao?: string | null
-          data_referencia_status?: string
           dia_status_sebrae?: string
           id?: string
           nome_evento?: string
           periodicidade?: string
-          prazo_abertura_coordenadoria?: number
-          prazo_articulacao_local?: number
+          prazo_abertura_coordenadoria?: number | null
+          prazo_articulacao_local?: number | null
           prazo_aviso_previo?: number
           prazo_coleta_pesquisa?: number
-          prazo_idv_brainstorm?: number
-          prazo_idv_terceirizada?: number
+          prazo_idv_brainstorm?: number | null
+          prazo_idv_terceirizada?: number | null
           prazo_pesquisa_conselheiros?: number
-          prazo_pf_aprovacao_ca?: number
-          prazo_pf_elaboracao?: number
+          prazo_pf_aprovacao_ca?: number | null
+          prazo_pf_elaboracao?: number | null
           status?: string
           updated_at?: string
         }
