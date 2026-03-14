@@ -17,9 +17,10 @@ interface AbatimentosTabProps {
   createEvento: (input: PresidenciaEventoInput) => Promise<void>;
   updateEvento: (id: string, input: PresidenciaEventoInput) => Promise<void>;
   deleteEvento: (id: string) => Promise<void>;
+  dataReferenciaStatus: string;
 }
 
-const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEvento }: AbatimentosTabProps) => {
+const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEvento, dataReferenciaStatus }: AbatimentosTabProps) => {
   const [showForm, setShowForm] = useState(false);
   const [editEvento, setEditEvento] = useState<PresidenciaEvento | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -66,7 +67,7 @@ const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEv
             const input: PresidenciaEventoInput = {
               nomeEvento: ev.nomeEvento,
               dataEvento: ev.dataEvento,
-              dataReferenciaStatus: ev.dataReferenciaStatus,
+              dataReferenciaStatus,
               prazoIdvBrainstorm: ev.prazoIdvBrainstorm,
               prazoIdvTerceirizada: ev.prazoIdvTerceirizada,
               prazoPfElaboracao: ev.prazoPfElaboracao,
@@ -143,6 +144,7 @@ const AbatimentosTab = ({ eventos, loading, createEvento, updateEvento, deleteEv
           onClose={() => { setShowForm(false); setEditEvento(null); }}
           onSave={handleSave}
           eventoEdit={editEvento}
+          dataReferenciaStatus={dataReferenciaStatus}
         />
       )}
 

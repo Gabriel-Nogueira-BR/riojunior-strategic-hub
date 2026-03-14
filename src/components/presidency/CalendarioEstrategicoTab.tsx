@@ -10,11 +10,12 @@ import { calcularCronograma, gerarTimeline, PresidenciaEventoInput } from '@/uti
 interface CalendarioEstrategicoTabProps {
   eventos: PresidenciaEvento[];
   loading: boolean;
+  dataReferenciaStatus: string;
 }
 
 const WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
-const CalendarioEstrategicoTab = ({ eventos, loading }: CalendarioEstrategicoTabProps) => {
+const CalendarioEstrategicoTab = ({ eventos, loading, dataReferenciaStatus }: CalendarioEstrategicoTabProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const allMarcos = useMemo(() => {
@@ -24,7 +25,7 @@ const CalendarioEstrategicoTab = ({ eventos, loading }: CalendarioEstrategicoTab
       const input: PresidenciaEventoInput = {
         nomeEvento: ev.nomeEvento,
         dataEvento: ev.dataEvento,
-        dataReferenciaStatus: ev.dataReferenciaStatus,
+        dataReferenciaStatus,
         prazoIdvBrainstorm: ev.prazoIdvBrainstorm,
         prazoIdvTerceirizada: ev.prazoIdvTerceirizada,
         prazoPfElaboracao: ev.prazoPfElaboracao,
@@ -43,7 +44,7 @@ const CalendarioEstrategicoTab = ({ eventos, loading }: CalendarioEstrategicoTab
     });
 
     return marcos;
-  }, [eventos]);
+  }, [eventos, dataReferenciaStatus]);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
