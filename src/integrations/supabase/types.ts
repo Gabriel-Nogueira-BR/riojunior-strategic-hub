@@ -486,6 +486,8 @@ export type Database = {
       presidencia_eventos: {
         Row: {
           created_at: string
+          data_abertura_coordenadoria: string | null
+          data_articulacao_local: string | null
           data_evento: string
           data_idv_inicio_brainstorm: string | null
           data_idv_inicio_terceirizada: string | null
@@ -500,6 +502,8 @@ export type Database = {
           id: string
           nome_evento: string
           periodicidade: string
+          prazo_abertura_coordenadoria: number
+          prazo_articulacao_local: number
           prazo_aviso_previo: number
           prazo_coleta_pesquisa: number
           prazo_idv_brainstorm: number
@@ -512,6 +516,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          data_abertura_coordenadoria?: string | null
+          data_articulacao_local?: string | null
           data_evento: string
           data_idv_inicio_brainstorm?: string | null
           data_idv_inicio_terceirizada?: string | null
@@ -526,6 +532,8 @@ export type Database = {
           id?: string
           nome_evento: string
           periodicidade?: string
+          prazo_abertura_coordenadoria?: number
+          prazo_articulacao_local?: number
           prazo_aviso_previo?: number
           prazo_coleta_pesquisa?: number
           prazo_idv_brainstorm?: number
@@ -538,6 +546,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          data_abertura_coordenadoria?: string | null
+          data_articulacao_local?: string | null
           data_evento?: string
           data_idv_inicio_brainstorm?: string | null
           data_idv_inicio_terceirizada?: string | null
@@ -552,6 +562,8 @@ export type Database = {
           id?: string
           nome_evento?: string
           periodicidade?: string
+          prazo_abertura_coordenadoria?: number
+          prazo_articulacao_local?: number
           prazo_aviso_previo?: number
           prazo_coleta_pesquisa?: number
           prazo_idv_brainstorm?: number

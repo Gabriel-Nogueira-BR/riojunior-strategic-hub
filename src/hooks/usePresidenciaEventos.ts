@@ -15,6 +15,8 @@ export interface PresidenciaEvento {
   prazoPfAprovacaoCa: number;
   prazoAvisoPrevio: number;
   prazoColetaPesquisa: number;
+  prazoAberturaCoordenadoria: number;
+  prazoArticulacaoLocal: number;
   dataMarcoZero: string | null;
   dataIdvInicioBrainstorm: string | null;
   dataIdvInicioTerceirizada: string | null;
@@ -23,6 +25,8 @@ export interface PresidenciaEvento {
   dataPesquisaLancamento: string | null;
   dataPesquisaAvisoPrevio: string | null;
   dataPesquisaLimiteColeta: string | null;
+  dataAberturaCoordenadoria: string | null;
+  dataArticulacaoLocal: string | null;
   status: string;
 }
 
@@ -51,6 +55,8 @@ export function usePresidenciaEventos() {
         prazoPfAprovacaoCa: e.prazo_pf_aprovacao_ca,
         prazoAvisoPrevio: e.prazo_aviso_previo,
         prazoColetaPesquisa: e.prazo_coleta_pesquisa,
+        prazoAberturaCoordenadoria: e.prazo_abertura_coordenadoria,
+        prazoArticulacaoLocal: e.prazo_articulacao_local,
         dataMarcoZero: e.data_marco_zero,
         dataIdvInicioBrainstorm: e.data_idv_inicio_brainstorm,
         dataIdvInicioTerceirizada: e.data_idv_inicio_terceirizada,
@@ -59,6 +65,8 @@ export function usePresidenciaEventos() {
         dataPesquisaLancamento: e.data_pesquisa_lancamento,
         dataPesquisaAvisoPrevio: e.data_pesquisa_aviso_previo,
         dataPesquisaLimiteColeta: e.data_pesquisa_limite_coleta,
+        dataAberturaCoordenadoria: e.data_abertura_coordenadoria,
+        dataArticulacaoLocal: e.data_articulacao_local,
         status: e.status,
       }));
 
@@ -91,6 +99,8 @@ export function usePresidenciaEventos() {
           prazo_pf_aprovacao_ca: input.prazoPfAprovacaoCa,
           prazo_aviso_previo: input.prazoAvisoPrevio,
           prazo_coleta_pesquisa: input.prazoColetaPesquisa,
+          prazo_abertura_coordenadoria: input.prazoAberturaCoordenadoria,
+          prazo_articulacao_local: input.prazoArticulacaoLocal,
           data_marco_zero: cronograma.dataMarcoZero,
           data_idv_inicio_brainstorm: cronograma.dataIdvInicioBrainstorm,
           data_idv_inicio_terceirizada: cronograma.dataIdvInicioTerceirizada,
@@ -99,6 +109,8 @@ export function usePresidenciaEventos() {
           data_pesquisa_lancamento: cronograma.dataPesquisaLancamento,
           data_pesquisa_aviso_previo: cronograma.dataPesquisaAvisoPrevio,
           data_pesquisa_limite_coleta: cronograma.dataPesquisaLimiteColeta,
+          data_abertura_coordenadoria: cronograma.dataAberturaCoordenadoria,
+          data_articulacao_local: cronograma.dataArticulacaoLocal,
         } as any);
 
       if (error) throw error;
@@ -127,6 +139,8 @@ export function usePresidenciaEventos() {
           prazo_pf_aprovacao_ca: input.prazoPfAprovacaoCa,
           prazo_aviso_previo: input.prazoAvisoPrevio,
           prazo_coleta_pesquisa: input.prazoColetaPesquisa,
+          prazo_abertura_coordenadoria: input.prazoAberturaCoordenadoria,
+          prazo_articulacao_local: input.prazoArticulacaoLocal,
           data_marco_zero: cronograma.dataMarcoZero,
           data_idv_inicio_brainstorm: cronograma.dataIdvInicioBrainstorm,
           data_idv_inicio_terceirizada: cronograma.dataIdvInicioTerceirizada,
@@ -135,6 +149,8 @@ export function usePresidenciaEventos() {
           data_pesquisa_lancamento: cronograma.dataPesquisaLancamento,
           data_pesquisa_aviso_previo: cronograma.dataPesquisaAvisoPrevio,
           data_pesquisa_limite_coleta: cronograma.dataPesquisaLimiteColeta,
+          data_abertura_coordenadoria: cronograma.dataAberturaCoordenadoria,
+          data_articulacao_local: cronograma.dataArticulacaoLocal,
         } as any)
         .eq('id', id);
 
