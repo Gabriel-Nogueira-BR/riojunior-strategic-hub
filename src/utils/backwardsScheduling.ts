@@ -69,8 +69,10 @@ export function calcularCronograma(input: PresidenciaEventoInput): CronogramaCal
   let dataPfInicioElaboracao: Date | null = null;
   let dataPfAprovacaoCa: Date | null = null;
   if (input.prazoPfElaboracao != null && input.prazoPfAprovacaoCa != null) {
-    dataPfAprovacaoCa = marcoZero;
-    dataPfInicioElaboracao = subDays(marcoZero, input.prazoPfAprovacaoCa + input.prazoPfElaboracao);
+    // Aprovação CA começa X dias antes do Marco Zero e vai até o Marco Zero
+    dataPfAprovacaoCa = subDays(marcoZero, input.prazoPfAprovacaoCa);
+    // Elaboração começa antes da Aprovação
+    dataPfInicioElaboracao = subDays(dataPfAprovacaoCa, input.prazoPfElaboracao);
   }
 
   // Fluxo Infraestrutura — only if articulação local and PF elaboração are set
