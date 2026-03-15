@@ -69,8 +69,10 @@ export function calcularCronograma(input: PresidenciaEventoInput): CronogramaCal
   let dataPfInicioElaboracao: Date | null = null;
   let dataPfAprovacaoCa: Date | null = null;
   if (input.prazoPfElaboracao != null && input.prazoPfAprovacaoCa != null) {
-    dataPfAprovacaoCa = marcoZero;
-    dataPfInicioElaboracao = subDays(marcoZero, input.prazoPfAprovacaoCa + input.prazoPfElaboracao);
+    // Aprovação CA começa X dias antes do Marco Zero e vai até o Marco Zero
+    dataPfAprovacaoCa = subDays(marcoZero, input.prazoPfAprovacaoCa);
+    // Elaboração começa antes da Aprovação
+    dataPfInicioElaboracao = subDays(dataPfAprovacaoCa, input.prazoPfElaboracao);
   }
 
   // Fluxo Infraestrutura — only if articulação local and PF elaboração are set
@@ -144,6 +146,9 @@ export function gerarTimeline(input: PresidenciaEventoInput, cronograma: Cronogr
   }
   if (cronograma.dataPfInicioElaboracao) {
     marcos.push({ label: 'Início Elaboração PF', data: cronograma.dataPfInicioElaboracao, cor: '#10b981', fluxo: 'financeiro' });
+  }
+  if (cronograma.dataPfAprovacaoCa) {
+    marcos.push({ label: 'Início Aprovação CA', data: cronograma.dataPfAprovacaoCa, cor: '#059669', fluxo: 'financeiro' });
   }
   if (cronograma.dataPesquisaLancamento) {
     marcos.push({ label: 'Lançamento Pesquisa', data: cronograma.dataPesquisaLancamento, cor: '#a855f7', fluxo: 'articulacao' });
