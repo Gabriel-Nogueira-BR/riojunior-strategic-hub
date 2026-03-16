@@ -45,12 +45,7 @@ const Index = () => {
           />
         );
       case 'formation':
-        return (
-          <PlaceholderView 
-            title="Formação Empreendedora" 
-            description="Esta seção será desenvolvida em breve. Aqui você encontrará trilhas de formação, capacitações e programas educacionais." 
-          />
-        );
+        return <FormacaoEmpreendedoraView selectedYear={selectedYear} />;
       default:
         return <CalendarView selectedYear={selectedYear} />;
     }
