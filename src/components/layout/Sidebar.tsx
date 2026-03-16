@@ -112,7 +112,6 @@ const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
           label="Formação Empreendedora" 
           active={activeTab === 'formation'} 
           onClick={() => setActiveTab('formation')}
-          badge="Em breve"
         />
       </nav>
 

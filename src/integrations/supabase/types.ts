@@ -172,6 +172,44 @@ export type Database = {
           },
         ]
       }
+      demandas_formacao: {
+        Row: {
+          created_at: string
+          etapa: string
+          evento_id: string
+          id: string
+          prazo: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          etapa: string
+          evento_id: string
+          id?: string
+          prazo?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          etapa?: string
+          evento_id?: string
+          id?: string
+          prazo?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demandas_formacao_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "presidencia_eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documentos: {
         Row: {
           created_at: string
